@@ -1,0 +1,25 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Eliminar Ingrediente - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Confirmar eliminacion</h4>
+            </div>
+            <div class="card-body">
+                <p>Estas seguro de que quieres eliminar el ingrediente <strong>"{{ ingrediente.nombre }}"</strong>?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Si, eliminar</button>
+                        <a href="{% url 'ingrediente_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

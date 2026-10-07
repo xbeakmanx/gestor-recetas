@@ -1,0 +1,26 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Eliminar Receta - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Confirmar eliminacion</h4>
+            </div>
+            <div class="card-body">
+                <p>Estas seguro de que quieres eliminar la receta <strong>"{{ receta.titulo }}"</strong>?</p>
+                <p class="text-muted">Esta accion no se puede deshacer. Se eliminaran tambien sus ingredientes, comentarios e imagenes asociadas.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Si, eliminar</button>
+                        <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

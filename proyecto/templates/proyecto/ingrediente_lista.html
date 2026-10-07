@@ -1,0 +1,40 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Ingredientes - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Ingredientes</h1>
+    <a href="{% url 'ingrediente_crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nuevo Ingrediente
+    </a>
+</div>
+
+{% if ingredientes %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Unidad base</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingrediente in ingredientes %}
+            <tr>
+                <td><strong>{{ ingrediente.nombre }}</strong></td>
+                <td>{{ ingrediente.unidad_base }}</td>
+                <td>
+                    <a href="{% url 'ingrediente_editar' ingrediente.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                    <a href="{% url 'ingrediente_eliminar' ingrediente.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">No hay ingredientes registrados.</div>
+{% endif %}
+{% endblock %}

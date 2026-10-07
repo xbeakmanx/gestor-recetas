@@ -1,0 +1,40 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Categorias - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Categorias</h1>
+    <a href="{% url 'categoria_crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nueva Categoria
+    </a>
+</div>
+
+{% if categorias %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td><strong>{{ categoria.nombre }}</strong></td>
+                <td>{{ categoria.descripcion|default:"—" }}</td>
+                <td>
+                    <a href="{% url 'categoria_editar' categoria.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                    <a href="{% url 'categoria_eliminar' categoria.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">No hay categorias registradas.</div>
+{% endif %}
+{% endblock %}
