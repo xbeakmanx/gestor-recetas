@@ -54,9 +54,9 @@ class Ingrediente(models.Model):
 
 class Receta(models.Model):
     class Dificultad(models.TextChoices):
-        FACIL = "facil", "Facil"
+        FACIL = "facil", "Fácil"
         MEDIA = "media", "Media"
-        DIFICIL = "dificil", "Dificil"
+        DIFICIL = "dificil", "Difícil"
 
     id_receta = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(
@@ -229,4 +229,4 @@ class Favorito(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.usuario} guardo {self.receta}"
+        return f"{self.usuario} guardó {self.receta}"

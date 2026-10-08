@@ -3,28 +3,31 @@
 {% block titulo %}Exportar Datos - Gestor de Recetas{% endblock %}
 
 {% block contenido %}
+<div class="seccion-titulo">
+    <h1><i class="bi bi-download"></i> Exportar Datos</h1>
+</div>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <h1>Exportar Datos</h1>
-        <p>Exporta todos los datos de la base de datos a archivos CSV y/o XLSX usando django-pandas.</p>
-
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" style="padding: 1.5rem;">
+                <p style="color: var(--color-texto-claro);">
+                    Exporta todos los datos de la base de datos a archivos CSV y/o XLSX usando django-pandas.
+                </p>
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label">Formato de exportacion</label>
+                        <label class="form-label">Formato de exportación</label>
                         <select name="formato" class="form-select">
                             <option value="ambos">CSV + XLSX (ambos)</option>
                             <option value="csv">Solo CSV</option>
                             <option value="xlsx">Solo XLSX</option>
                         </select>
                     </div>
-                    <p class="text-muted small">
-                        Los archivos se guardaran en la carpeta <code>exportado/</code> del proyecto.
-                        Se genera un archivo CSV por cada tabla y un archivo XLSX con todas las tablas en hojas separadas.
+                    <p style="font-size: 0.85rem; color: var(--color-texto-claro);">
+                        Los archivos se guardarán en la carpeta <code>exportado/</code> del proyecto.
                     </p>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primario">
                         <i class="bi bi-download"></i> Exportar
                     </button>
                 </form>

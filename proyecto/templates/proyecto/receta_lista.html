@@ -4,72 +4,95 @@
 {% block titulo %}Recetas - Gestor de Recetas{% endblock %}
 
 {% block contenido %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="seccion-titulo">
     <h1>Recetas</h1>
-    <a href="{% url 'receta_crear' %}" class="btn btn-primary">
+    <a href="{% url 'receta_crear' %}" class="btn btn-primario">
         <i class="bi bi-plus-lg"></i> Nueva Receta
     </a>
 </div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <form method="get" class="row g-2">
-            <div class="col-md-3">
-                <select name="categoria" class="form-select">
-                    <option value="">Todas las categorias</option>
-                    {% for cat in categorias %}
-                    <option value="{{ cat.pk }}" {% if filtros.categoria == cat.pk|stringformat:"d" %}selected{% endif %}>
-                        {{ cat.nombre }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="dificultad" class="form-select">
-                    <option value="">Cualquier dificultad</option>
-                    {% for valor, nombre in dificultades %}
-                    <option value="{{ valor }}" {% if filtros.dificultad == valor %}selected{% endif %}>
-                        {{ nombre }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-4">
-                <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ filtros.q }}">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
-            </div>
-        </form>
-    </div>
+<div class="filtros-bar">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Categoría</label>
+            <select name="categoria" class="form-select form-select-sm">
+                <option value="">Todas</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.pk }}" {% if filtros.categoria == cat.pk|stringformat:"d" %}selected{% endif %}>
+                    {{ cat.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Dificultad</label>
+            <select name="dificultad" class="form-select form-select-sm">
+                <option value="">Cualquiera</option>
+                {% for valor, nombre in dificultades %}
+                <option value="{{ valor }}" {% if filtros.dificultad == valor %}selected{% endif %}>
+                    {{ nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Buscar</label>
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Nombre de la receta..." value="{{ filtros.q }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primario btn-sm w-100">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+        </div>
+    </form>
 </div>
 
 {% if recetas %}
-<div class="row">
+<div class="row g-4">
     {% for receta in recetas %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
+    <div class="col-md-4">
+        <div class="card receta-card h-100">
+            <div class="card-img-placeholder">
+                <i class="bi bi-egg-fried"></i>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">{{ receta.titulo }}</h5>
-                <p class="text-muted mb-2">
+                <h5 class="card-title">
+                    <a href="{% url 'receta_detalle' receta.pk %}">{{ receta.titulo }}</a>
+                </h5>
+                <div class="receta-meta">
                     {% if receta.categoria %}
-                    <span class="badge bg-secondary">{{ receta.categoria }}</span>
+                    <span class="etiqueta categoria">{{ receta.categoria }}</span>
                     {% endif %}
-                    <span class="badge bg-info">{{ receta.get_dificultad_display }}</span>
-                    <span class="badge bg-light text-dark">
+                    <span class="etiqueta dificultad">{{ receta.get_dificultad_display }}</span>
+                    <span class="etiqueta tiempo">
                         <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
                     </span>
-                </p>
-                <p class="card-text">{{ receta.descripcion|truncatechars:120 }}</p>
-                <p class="text-muted small">
+                </div>
+                <p class="receta-descripcion">{{ receta.descripcion|truncatechars:120 }}</p>
+                <p class="receta-autor">
                     <i class="bi bi-person"></i> {{ receta.usuario }}
                     &middot; {{ receta.fecha_creacion|date:"d/m/Y" }}
                 </p>
             </div>
-            <div class="card-footer d-flex gap-2">
-                <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
-                <a href="{% url 'receta_editar' receta.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
-                <a href="{% url 'receta_eliminar' receta.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            <div class="card-footer">
+                <div class="d-flex gap-2">
+                    <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-sm btn-outline-primario">Ver</a>
+                    <a href="{% url 'receta_editar' receta.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                    <a href="{% url 'receta_eliminar' receta.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </div>
+                {% if request.session.usuario_id %}
+                <form method="post" action="{% url 'toggle_favorito' receta.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-favorito {% if receta.pk in favoritas_ids %}activo{% endif %}"
+                            title="{% if receta.pk in favoritas_ids %}Quitar de favoritos{% else %}Añadir a favoritos{% endif %}">
+                        <i class="bi {% if receta.pk in favoritas_ids %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn-favorito" style="text-decoration: none;" title="Inicia sesión para guardar en favoritos">
+                    <i class="bi bi-heart"></i>
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -77,21 +100,25 @@
 </div>
 
 {% if is_paginated %}
-<nav>
+<nav class="mt-4">
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}">Anterior</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}{% if filtros.categoria %}&categoria={{ filtros.categoria }}{% endif %}{% if filtros.dificultad %}&dificultad={{ filtros.dificultad }}{% endif %}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
         </li>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}">{{ num }}</a>
+            <a class="page-link" href="?page={{ num }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}{% if filtros.categoria %}&categoria={{ filtros.categoria }}{% endif %}{% if filtros.dificultad %}&dificultad={{ filtros.dificultad }}{% endif %}">{{ num }}</a>
         </li>
         {% endfor %}
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}">Siguiente</a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtros.q %}&q={{ filtros.q }}{% endif %}{% if filtros.categoria %}&categoria={{ filtros.categoria }}{% endif %}{% if filtros.dificultad %}&dificultad={{ filtros.dificultad }}{% endif %}">
+                <i class="bi bi-chevron-right"></i>
+            </a>
         </li>
         {% endif %}
     </ul>
@@ -99,8 +126,9 @@
 {% endif %}
 
 {% else %}
-<div class="alert alert-info">
-    No se encontraron recetas con esos filtros.
+<div class="empty-state">
+    <i class="bi bi-journal-plus"></i>
+    <p>No se encontraron recetas con esos filtros.</p>
 </div>
 {% endif %}
 {% endblock %}

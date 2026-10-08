@@ -10,10 +10,10 @@
     <link href="{% static 'proyecto/css/estilos.css' %}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'inicio' %}">
-                <i class="bi bi-journal-richtext"></i> Gestor de Recetas
+                <i class="bi bi-egg-fried"></i> Gestor de Recetas
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -21,23 +21,68 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'receta_lista' %}">Recetas</a>
+                        <a class="nav-link" href="{% url 'receta_lista' %}">
+                            <i class="bi bi-book"></i> Recetas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'categoria_lista' %}">Categorias</a>
+                        <a class="nav-link" href="{% url 'categoria_lista' %}">
+                            <i class="bi bi-tags"></i> Categorías
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ingrediente_lista' %}">Ingredientes</a>
+                        <a class="nav-link" href="{% url 'ingrediente_lista' %}">
+                            <i class="bi bi-basket3"></i> Ingredientes
+                        </a>
                     </li>
+                    {% if request.session.usuario_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'favoritas' %}">
+                            <i class="bi bi-heart"></i> Favoritas
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'exportar' %}">
                             <i class="bi bi-download"></i> Exportar
                         </a>
                     </li>
                 </ul>
-                <form class="d-flex" action="{% url 'receta_lista' %}" method="get">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar recetas..." value="{{ request.GET.q|default:'' }}">
-                    <button class="btn btn-outline-light" type="submit">Buscar</button>
+                <ul class="navbar-nav">
+                    {% if request.session.usuario_id %}
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="bi bi-person-circle"></i> {{ request.session.usuario_nombre }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Salir
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'registro' %}">
+                            <i class="bi bi-person-plus"></i> Registro
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <form class="d-flex ms-2" action="{% url 'receta_lista' %}" method="get">
+                    <div class="input-group">
+                        <input class="form-control form-control-sm" type="search" name="q"
+                               placeholder="Buscar recetas..." value="{{ request.GET.q|default:'' }}"
+                               style="border-radius: 8px 0 0 8px;">
+                        <button class="btn btn-sm btn-outline-light" type="submit"
+                                style="border-radius: 0 8px 8px 0;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -55,12 +100,6 @@
 
         {% block contenido %}{% endblock %}
     </main>
-
-    <footer class="bg-dark text-light py-3 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">Gestor de Recetas &mdash; Proyecto Final Python</p>
-        </div>
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

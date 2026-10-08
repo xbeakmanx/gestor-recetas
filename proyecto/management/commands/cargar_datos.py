@@ -14,15 +14,15 @@ class Command(BaseCommand):
             modelo.objects.all().delete()
 
         ana = Usuario.objects.create(
-            nombre="Ana Garcia", email="ana@ejemplo.com",
+            nombre="Ana García", email="ana@ejemplo.com",
             contrasena_hash="hash_ana",
         )
         luis = Usuario.objects.create(
-            nombre="Luis Perez", email="luis@ejemplo.com",
+            nombre="Luis Pérez", email="luis@ejemplo.com",
             contrasena_hash="hash_luis",
         )
         maria = Usuario.objects.create(
-            nombre="Maria Lopez", email="maria@ejemplo.com",
+            nombre="María López", email="maria@ejemplo.com",
             contrasena_hash="hash_maria",
         )
 
@@ -32,7 +32,7 @@ class Command(BaseCommand):
         bebidas = Categoria.objects.create(nombre="Bebidas", descripcion="Bebidas y batidos")
 
         harina = Ingrediente.objects.create(nombre="Harina", unidad_base="g")
-        azucar = Ingrediente.objects.create(nombre="Azucar", unidad_base="g")
+        azucar = Ingrediente.objects.create(nombre="Azúcar", unidad_base="g")
         huevo = Ingrediente.objects.create(nombre="Huevo", unidad_base="unidad")
         arroz = Ingrediente.objects.create(nombre="Arroz", unidad_base="g")
         tomate = Ingrediente.objects.create(nombre="Tomate", unidad_base="unidad")
@@ -40,41 +40,41 @@ class Command(BaseCommand):
         sal = Ingrediente.objects.create(nombre="Sal", unidad_base="g")
         leche = Ingrediente.objects.create(nombre="Leche", unidad_base="ml")
         pollo = Ingrediente.objects.create(nombre="Pechuga de pollo", unidad_base="g")
-        limon = Ingrediente.objects.create(nombre="Limon", unidad_base="unidad")
+        limon = Ingrediente.objects.create(nombre="Limón", unidad_base="unidad")
 
         bizcocho = Receta.objects.create(
             usuario=ana, categoria=postres,
             titulo="Bizcocho casero",
-            descripcion="Un bizcocho esponjoso y facil de preparar.",
-            instrucciones="1. Precalentar el horno a 180 grados.\n2. Mezclar harina, azucar y huevos.\n3. Verter en molde engrasado.\n4. Hornear 40 minutos.",
+            descripcion="Un bizcocho esponjoso y fácil de preparar.",
+            instrucciones="1. Precalentar el horno a 180 grados.\n2. Mezclar harina, azúcar y huevos.\n3. Verter en molde engrasado.\n4. Hornear 40 minutos.",
             tiempo_preparacion=50, dificultad=Receta.Dificultad.FACIL,
         )
         paella = Receta.objects.create(
             usuario=luis, categoria=principales,
             titulo="Paella valenciana",
             descripcion="Paella tradicional con pollo y verduras.",
-            instrucciones="1. Sofreir el pollo troceado.\n2. Anadir tomate rallado.\n3. Anadir agua y dejar hervir.\n4. Anadir arroz y cocinar 20 minutos.",
+            instrucciones="1. Sofreír el pollo troceado.\n2. Añadir tomate rallado.\n3. Añadir agua y dejar hervir.\n4. Añadir arroz y cocinar 20 minutos.",
             tiempo_preparacion=60, dificultad=Receta.Dificultad.MEDIA,
         )
         ensalada = Receta.objects.create(
             usuario=maria, categoria=entrantes,
-            titulo="Ensalada mediterranea",
-            descripcion="Ensalada fresca con tomate, aceite de oliva y limon.",
-            instrucciones="1. Cortar los tomates en rodajas.\n2. Aliñar con aceite y limon.\n3. Anadir sal al gusto.",
+            titulo="Ensalada mediterránea",
+            descripcion="Ensalada fresca con tomate, aceite de oliva y limón.",
+            instrucciones="1. Cortar los tomates en rodajas.\n2. Aliñar con aceite y limón.\n3. Añadir sal al gusto.",
             tiempo_preparacion=10, dificultad=Receta.Dificultad.FACIL,
         )
         limonada = Receta.objects.create(
             usuario=ana, categoria=bebidas,
             titulo="Limonada natural",
             descripcion="Limonada refrescante hecha con limones frescos.",
-            instrucciones="1. Exprimir los limones.\n2. Mezclar con agua y azucar.\n3. Servir con hielo.",
+            instrucciones="1. Exprimir los limones.\n2. Mezclar con agua y azúcar.\n3. Servir con hielo.",
             tiempo_preparacion=15, dificultad=Receta.Dificultad.FACIL,
         )
         tortilla = Receta.objects.create(
             usuario=luis, categoria=principales,
-            titulo="Tortilla espanola",
-            descripcion="Tortilla de patatas clasica.",
-            instrucciones="1. Pelar y cortar las patatas.\n2. Freir en aceite.\n3. Batir los huevos y mezclar.\n4. Cuajar en sarten.",
+            titulo="Tortilla española",
+            descripcion="Tortilla de patatas clásica.",
+            instrucciones="1. Pelar y cortar las patatas.\n2. Freír en aceite.\n3. Batir los huevos y mezclar.\n4. Cuajar en sartén.",
             tiempo_preparacion=40, dificultad=Receta.Dificultad.MEDIA,
         )
 
@@ -100,10 +100,10 @@ class Command(BaseCommand):
         ImagenReceta.objects.create(receta=bizcocho, url_imagen="https://ejemplo.com/bizcocho.jpg", texto_alternativo="Bizcocho casero", es_principal=True)
         ImagenReceta.objects.create(receta=paella, url_imagen="https://ejemplo.com/paella.jpg", texto_alternativo="Paella valenciana", es_principal=True)
 
-        Comentario.objects.create(usuario=luis, receta=bizcocho, contenido="Muy rico y facil de hacer.", puntuacion=5)
-        Comentario.objects.create(usuario=maria, receta=bizcocho, contenido="Le anadí chocolate y quedo genial.", puntuacion=4)
-        Comentario.objects.create(usuario=ana, receta=paella, contenido="Me quedo buenisima.", puntuacion=4)
-        Comentario.objects.create(usuario=maria, receta=paella, contenido="Un clasico que nunca falla.", puntuacion=5)
+        Comentario.objects.create(usuario=luis, receta=bizcocho, contenido="Muy rico y fácil de hacer.", puntuacion=5)
+        Comentario.objects.create(usuario=maria, receta=bizcocho, contenido="Le añadí chocolate y quedó genial.", puntuacion=4)
+        Comentario.objects.create(usuario=ana, receta=paella, contenido="Me quedó buenísima.", puntuacion=4)
+        Comentario.objects.create(usuario=maria, receta=paella, contenido="Un clásico que nunca falla.", puntuacion=5)
         Comentario.objects.create(usuario=luis, receta=ensalada, contenido="Perfecta para el verano.", puntuacion=4)
         Comentario.objects.create(usuario=ana, receta=tortilla, contenido="La mejor receta de tortilla.", puntuacion=5)
 

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria Técnica — Gestor de Recetas</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap">
+    <style>
+        :root {
+            --fondo: #faf8f5;
+            --texto: #2d2a26;
+            --texto-suave: #6b6560;
+            --primario: #c0694f;
+            --acento: #d4a574;
+            --borde: #e8e0d8;
+            --tarjeta: #ffffff;
+            --acento-suave: #f0e6da;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--fondo);
+            color: var(--texto);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+
+        .contenedor {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 600;
+            color: var(--texto);
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: var(--texto-suave);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--acento-suave);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+        }
+
+        p, li { font-size: 0.95rem; }
+        p { margin-bottom: 0.8rem; }
+
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li { margin-bottom: 0.3rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--borde);
+        }
+
+        th {
+            background: var(--acento-suave);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tarjeta {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        code {
+            background: var(--acento-suave);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+        }
+
+        pre {
+            background: #2d2a26;
+            color: #f0e6da;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            line-height: 1.5;
+        }
+
+        .diagrama {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .diagrama svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            border-bottom: 3px solid var(--primario);
+            margin-bottom: 2rem;
+        }
+
+        .portada .icono {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dato-portada {
+            color: var(--texto-suave);
+            font-size: 0.9rem;
+            margin: 0.2rem 0;
+        }
+
+        .indice {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .indice ol { margin-bottom: 0; }
+
+        .indice a {
+            color: var(--primario);
+            text-decoration: none;
+        }
+
+        .indice a:hover { text-decoration: underline; }
+
+        .badge {
+            display: inline-block;
+            background: var(--primario);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.8rem; }
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.2rem; }
+            pre { font-size: 0.78rem; }
+        }
+
+        @media print {
+            body { padding: 0; font-size: 11pt; }
+            .tarjeta { break-inside: avoid; }
+            pre { white-space: pre-wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <div class="portada">
+        <div class="icono">🍳</div>
+        <h1>Memoria Técnica</h1>
+        <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primario); margin-bottom: 1rem;">Gestor de Recetas</p>
+        <p class="dato-portada">Proyecto Final — Python</p>
+        <p class="dato-portada">CEI — Octubre 2026</p>
+        <p class="dato-portada">Jhon García</p>
+    </div>
+
+    <div class="indice">
+        <h3 style="margin-top: 0;">Índice</h3>
+        <ol>
+            <li><a href="#intro">Introducción y objetivos</a></li>
+            <li><a href="#arquitectura">Arquitectura del sistema</a></li>
+            <li><a href="#modelos">Modelo de datos</a></li>
+            <li><a href="#tecnologias">Tecnologías utilizadas</a></li>
+            <li><a href="#estructura">Estructura del proyecto</a></li>
+            <li><a href="#funcionalidades">Funcionalidades principales</a></li>
+            <li><a href="#servicios">Capa de servicios</a></li>
+            <li><a href="#exportacion">Exportación de datos</a></li>
+            <li><a href="#interfaz">Interfaz de usuario</a></li>
+            <li><a href="#manual">Manual de usuario</a></li>
+            <li><a href="#justificacion">Justificación técnica</a></li>
+        </ol>
+    </div>
+
+    <!-- 1. INTRODUCCIÓN -->
+    <h2 id="intro">1. Introducción y objetivos</h2>
+    <p>
+        El <strong>Gestor de Recetas</strong> es una plataforma web desarrollada con Django que permite a los usuarios crear, organizar, buscar y compartir recetas de cocina. El proyecto responde a la necesidad de tener un sistema centralizado donde gestionar recetas con sus ingredientes, categorías, comentarios y puntuaciones.
+    </p>
+    <h3>Objetivos del proyecto</h3>
+    <ul>
+        <li>Desarrollar una aplicación web CRUD completa con Django y Python.</li>
+        <li>Implementar un modelo de datos relacional con 8 entidades interconectadas.</li>
+        <li>Aplicar el patrón de capa de servicios para separar la lógica de negocio.</li>
+        <li>Integrar <code>django-pandas</code> para la exportación de datos a CSV y XLSX.</li>
+        <li>Crear una interfaz de usuario funcional y responsive con Bootstrap 5.</li>
+        <li>Implementar sistema de autenticación basado en sesiones.</li>
+        <li>Incorporar sistema de favoritos y comentarios con puntuación.</li>
+    </ul>
+
+    <!-- 2. ARQUITECTURA -->
+    <h2 id="arquitectura">2. Arquitectura del sistema</h2>
+    <p>
+        La aplicación sigue la arquitectura <strong>MVT (Model-View-Template)</strong> propia de Django, complementada con una <strong>capa de servicios</strong> que encapsula la lógica de negocio.
+    </p>
+
+    <div class="diagrama">
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="max-width: 650px;">
+            <!-- Navegador -->
+            <rect x="260" y="10" width="180" height="45" rx="8" fill="#c0694f" stroke="#a85a42" stroke-width="1.5"/>
+            <text x="350" y="38" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="14" font-weight="600">Navegador (Cliente)</text>
+
+            <line x1="350" y1="55" x2="350" y2="80" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+
+            <!-- URLs -->
+            <rect x="260" y="80" width="180" height="40" rx="8" fill="#d4a574" stroke="#c0694f" stroke-width="1.5"/>
+            <text x="350" y="105" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600">urls.py (Rutas)</text>
+
+            <line x1="350" y1="120" x2="350" y2="150" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+
+            <!-- Views -->
+            <rect x="260" y="150" width="180" height="40" rx="8" fill="#5a8a5e" stroke="#4a7a4e" stroke-width="1.5"/>
+            <text x="350" y="175" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600">views.py (Vistas CBV)</text>
+
+            <!-- Services -->
+            <line x1="260" y1="170" x2="130" y2="170" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+            <rect x="20" y="150" width="110" height="40" rx="8" fill="#5a7a8a" stroke="#4a6a7a" stroke-width="1.5"/>
+            <text x="75" y="175" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="12" font-weight="600">services.py</text>
+
+            <!-- Templates -->
+            <line x1="440" y1="170" x2="530" y2="170" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+            <rect x="530" y="150" width="150" height="40" rx="8" fill="#8a6a5a" stroke="#7a5a4a" stroke-width="1.5"/>
+            <text x="605" y="175" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="12" font-weight="600">Templates (HTML)</text>
+
+            <!-- Forms -->
+            <line x1="350" y1="190" x2="350" y2="220" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+            <rect x="260" y="220" width="180" height="40" rx="8" fill="#7a6a8a" stroke="#6a5a7a" stroke-width="1.5"/>
+            <text x="350" y="245" text-anchor="middle" fill="white" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600">forms.py (Formularios)</text>
+
+            <!-- Models -->
+            <line x1="350" y1="260" x2="350" y2="285" stroke="#6b6560" stroke-width="1.5" marker-end="url(#flecha)"/>
+            <rect x="220" y="285" width="260" height="30" rx="6" fill="#2d2a26" stroke="#1d1a16" stroke-width="1.5"/>
+            <text x="350" y="305" text-anchor="middle" fill="#f0e6da" font-family="Source Sans 3, sans-serif" font-size="12" font-weight="600">models.py → SQLite3 (Base de datos)</text>
+
+            <!-- Export -->
+            <line x1="75" y1="190" x2="75" y2="285" stroke="#6b6560" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#flecha)"/>
+            <rect x="15" y="285" width="120" height="30" rx="6" fill="#2d2a26" stroke="#1d1a16" stroke-width="1.5"/>
+            <text x="75" y="305" text-anchor="middle" fill="#f0e6da" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="600">CSV / XLSX</text>
+
+            <defs>
+                <marker id="flecha" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#6b6560"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <!-- 3. MODELO DE DATOS -->
+    <h2 id="modelos">3. Modelo de datos</h2>
+    <p>
+        El sistema utiliza 8 modelos que representan las entidades principales del dominio. Las relaciones incluyen claves foráneas (1:N) y tablas intermedias para relaciones muchos a muchos (N:M).
+    </p>
+
+    <div class="diagrama">
+        <svg viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg" style="max-width: 700px;">
+            <!-- Usuario -->
+            <rect x="10" y="10" width="160" height="100" rx="6" fill="#fff" stroke="#c0694f" stroke-width="2"/>
+            <rect x="10" y="10" width="160" height="28" rx="6" fill="#c0694f"/>
+            <text x="90" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">USUARIO</text>
+            <text x="20" y="55" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_usuario</text>
+            <text x="20" y="70" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">nombre, email</text>
+            <text x="20" y="85" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">contrasena_hash</text>
+            <text x="20" y="100" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">fecha_registro</text>
+
+            <!-- Categoria -->
+            <rect x="540" y="10" width="160" height="85" rx="6" fill="#fff" stroke="#5a8a5e" stroke-width="2"/>
+            <rect x="540" y="10" width="160" height="28" rx="6" fill="#5a8a5e"/>
+            <text x="620" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">CATEGORÍA</text>
+            <text x="550" y="55" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_categoria</text>
+            <text x="550" y="70" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">nombre</text>
+            <text x="550" y="85" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">descripcion</text>
+
+            <!-- Receta (centro) -->
+            <rect x="250" y="130" width="200" height="130" rx="6" fill="#fff" stroke="#d4a574" stroke-width="2"/>
+            <rect x="250" y="130" width="200" height="28" rx="6" fill="#d4a574"/>
+            <text x="350" y="150" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">RECETA</text>
+            <text x="260" y="175" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_receta</text>
+            <text x="260" y="190" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_usuario → Usuario</text>
+            <text x="260" y="205" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_categoria → Categoría</text>
+            <text x="260" y="220" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">titulo, descripcion, instrucciones</text>
+            <text x="260" y="235" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">tiempo_preparacion, dificultad</text>
+            <text x="260" y="250" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">fecha_creacion</text>
+
+            <!-- Ingrediente -->
+            <rect x="540" y="160" width="160" height="75" rx="6" fill="#fff" stroke="#5a7a8a" stroke-width="2"/>
+            <rect x="540" y="160" width="160" height="28" rx="6" fill="#5a7a8a"/>
+            <text x="620" y="180" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">INGREDIENTE</text>
+            <text x="550" y="205" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_ingrediente</text>
+            <text x="550" y="220" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">nombre, unidad_base</text>
+
+            <!-- RecetaIngrediente -->
+            <rect x="540" y="280" width="170" height="90" rx="6" fill="#fff" stroke="#7a6a8a" stroke-width="2"/>
+            <rect x="540" y="280" width="170" height="28" rx="6" fill="#7a6a8a"/>
+            <text x="625" y="300" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Source Sans 3, sans-serif">RECETA_INGREDIENTE</text>
+            <text x="550" y="325" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_receta → Receta</text>
+            <text x="550" y="340" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_ingrediente → Ingr.</text>
+            <text x="550" y="355" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">cantidad, unidad, opcional</text>
+
+            <!-- Comentario -->
+            <rect x="250" y="320" width="170" height="100" rx="6" fill="#fff" stroke="#b55454" stroke-width="2"/>
+            <rect x="250" y="320" width="170" height="28" rx="6" fill="#b55454"/>
+            <text x="335" y="340" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">COMENTARIO</text>
+            <text x="260" y="365" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_comentario</text>
+            <text x="260" y="380" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_usuario, FK id_receta</text>
+            <text x="260" y="395" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">contenido, puntuacion</text>
+            <text x="260" y="410" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">fecha_comentario</text>
+
+            <!-- Favorito -->
+            <rect x="20" y="320" width="160" height="80" rx="6" fill="#fff" stroke="#c0694f" stroke-width="2"/>
+            <rect x="20" y="320" width="160" height="28" rx="6" fill="#c0694f"/>
+            <text x="100" y="340" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Source Sans 3, sans-serif">FAVORITO</text>
+            <text x="30" y="365" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_usuario → Usuario</text>
+            <text x="30" y="380" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_receta → Receta</text>
+            <text x="30" y="395" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">fecha_guardado</text>
+
+            <!-- ImagenReceta -->
+            <rect x="20" y="160" width="160" height="95" rx="6" fill="#fff" stroke="#8a6a5a" stroke-width="2"/>
+            <rect x="20" y="160" width="160" height="28" rx="6" fill="#8a6a5a"/>
+            <text x="100" y="180" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Source Sans 3, sans-serif">IMAGEN_RECETA</text>
+            <text x="30" y="205" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">PK id_imagen</text>
+            <text x="30" y="220" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">FK id_receta → Receta</text>
+            <text x="30" y="235" fill="#2d2a26" font-size="10" font-family="Source Sans 3, sans-serif">url_imagen</text>
+            <text x="30" y="250" fill="#6b6560" font-size="10" font-family="Source Sans 3, sans-serif">texto_alternativo, es_principal</text>
+
+            <!-- Líneas de relación -->
+            <!-- Usuario → Receta -->
+            <line x1="170" y1="60" x2="250" y2="175" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="195" y="110" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+            <!-- Categoria → Receta -->
+            <line x1="540" y1="60" x2="450" y2="175" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="505" y="110" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+            <!-- Receta → RecetaIngrediente -->
+            <line x1="450" y1="230" x2="540" y2="310" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="505" y="265" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+            <!-- Ingrediente → RecetaIngrediente -->
+            <line x1="620" y1="235" x2="625" y2="280" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="635" y="258" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+            <!-- Receta → Comentario -->
+            <line x1="335" y1="260" x2="335" y2="320" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="345" y="295" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+            <!-- Receta → Favorito -->
+            <line x1="250" y1="240" x2="180" y2="340" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="200" y="295" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">N:M</text>
+            <!-- Receta → ImagenReceta -->
+            <line x1="250" y1="190" x2="180" y2="200" stroke="#6b6560" stroke-width="1.2"/>
+            <text x="210" y="190" fill="#6b6560" font-size="9" font-family="Source Sans 3, sans-serif">1:N</text>
+        </svg>
+    </div>
+
+    <h3>Descripción de las entidades</h3>
+    <div style="overflow-x: auto;">
+    <table>
+        <thead>
+            <tr><th>Modelo</th><th>Tabla BD</th><th>Campos principales</th><th>Relaciones</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>Usuario</code></td><td>usuarios</td><td>nombre, email, contrasena_hash, fecha_registro</td><td>1:N con Receta, Comentario, Favorito</td></tr>
+            <tr><td><code>Categoria</code></td><td>categorias</td><td>nombre, descripcion</td><td>1:N con Receta</td></tr>
+            <tr><td><code>Ingrediente</code></td><td>ingredientes</td><td>nombre, unidad_base</td><td>N:M con Receta (vía RecetaIngrediente)</td></tr>
+            <tr><td><code>Receta</code></td><td>recetas</td><td>titulo, descripcion, instrucciones, tiempo_preparacion, dificultad</td><td>FK Usuario, FK Categoría</td></tr>
+            <tr><td><code>RecetaIngrediente</code></td><td>receta_ingrediente</td><td>cantidad, unidad, opcional</td><td>FK Receta, FK Ingrediente (UniqueConstraint)</td></tr>
+            <tr><td><code>ImagenReceta</code></td><td>imagenes_receta</td><td>url_imagen, texto_alternativo, es_principal</td><td>FK Receta</td></tr>
+            <tr><td><code>Comentario</code></td><td>comentarios</td><td>contenido, puntuacion (1-5), fecha_comentario</td><td>FK Usuario, FK Receta</td></tr>
+            <tr><td><code>Favorito</code></td><td>favoritos</td><td>fecha_guardado</td><td>FK Usuario, FK Receta (UniqueConstraint)</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- 4. TECNOLOGÍAS -->
+    <h2 id="tecnologias">4. Tecnologías utilizadas</h2>
+    <div style="overflow-x: auto;">
+    <table>
+        <thead>
+            <tr><th>Tecnología</th><th>Versión</th><th>Propósito</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Python</td><td>3.13</td><td>Lenguaje principal del backend</td></tr>
+            <tr><td>Django</td><td>6.1.1</td><td>Framework web (MVT)</td></tr>
+            <tr><td>django-pandas</td><td>0.6.7</td><td>Integración de DataFrameManager para exportación</td></tr>
+            <tr><td>pandas</td><td>2.2.3</td><td>Manipulación y exportación de datos tabulares</td></tr>
+            <tr><td>openpyxl</td><td>3.1.5</td><td>Escritura de archivos Excel (.xlsx)</td></tr>
+            <tr><td>SQLite3</td><td>(incluido)</td><td>Base de datos relacional</td></tr>
+            <tr><td>Bootstrap 5</td><td>CDN</td><td>Framework CSS para diseño responsive</td></tr>
+            <tr><td>Bootstrap Icons</td><td>CDN</td><td>Iconografía de la interfaz</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- 5. ESTRUCTURA -->
+    <h2 id="estructura">5. Estructura del proyecto</h2>
+    <pre>proyecto-recetas/
+├── manage.py
+├── requirements.txt
+├── db.sqlite3
+├── proyecto/
+│   ├── __init__.py
+│   ├── settings.py          # Configuración de Django
+│   ├── urls.py               # 20 rutas URL
+│   ├── models.py             # 8 modelos de datos
+│   ├── views.py              # 20 vistas (Class-Based Views)
+│   ├── forms.py              # 7 formularios + FormSet
+│   ├── services.py           # Capa de servicios
+│   ├── admin.py              # Panel de administración
+│   ├── wsgi.py / asgi.py
+│   ├── templatetags/
+│   │   └── recetas_tags.py   # Filtros personalizados
+│   ├── templates/proyecto/
+│   │   ├── base.html         # Template base
+│   │   ├── inicio.html       # Página principal
+│   │   ├── receta_*.html     # CRUD de recetas
+│   │   ├── categoria_*.html  # CRUD de categorías
+│   │   ├── ingrediente_*.html# CRUD de ingredientes
+│   │   ├── favoritas.html    # Recetas favoritas
+│   │   ├── exportar.html     # Exportación de datos
+│   │   ├── login.html        # Inicio de sesión
+│   │   └── registro.html     # Registro de usuario
+│   ├── static/proyecto/css/
+│   │   └── estilos.css       # Estilos personalizados
+│   └── management/commands/
+│       └── cargar_datos.py   # Datos de ejemplo
+└── exportado/                # Archivos exportados</pre>
+
+    <!-- 6. FUNCIONALIDADES -->
+    <h2 id="funcionalidades">6. Funcionalidades principales</h2>
+
+    <h3>6.1 CRUD de Recetas</h3>
+    <p>Operaciones completas de creación, lectura, actualización y eliminación de recetas. Cada receta incluye título, descripción, instrucciones, categoría, tiempo de preparación, dificultad e ingredientes asociados mediante un FormSet dinámico.</p>
+
+    <h3>6.2 CRUD de Categorías e Ingredientes</h3>
+    <p>Gestión independiente de categorías e ingredientes. Las categorías se pueden crear directamente desde el formulario de recetas mediante un botón "+" que redirige al formulario de creación y vuelve al formulario de receta.</p>
+
+    <h3>6.3 Sistema de autenticación</h3>
+    <p>Autenticación basada en sesiones de Django con registro e inicio de sesión. Las contraseñas se almacenan como hash SHA-256. La sesión guarda el <code>usuario_id</code> y <code>usuario_nombre</code> para identificar al usuario en toda la aplicación.</p>
+
+    <h3>6.4 Favoritos</h3>
+    <p>Los usuarios autenticados pueden marcar recetas como favoritas. El botón de corazón aparece en las listas y en el detalle de cada receta. Los usuarios no autenticados ven el corazón como enlace al login. La sección "Favoritas" muestra todas las recetas guardadas.</p>
+
+    <h3>6.5 Comentarios y puntuación</h3>
+    <p>Sistema de comentarios con puntuación de 1 a 5 estrellas en cada receta. Los comentarios se muestran ordenados por fecha descendente. Se utiliza un filtro de template personalizado (<code>estrellas</code>) para convertir la puntuación numérica en representación visual con caracteres ★ y ☆.</p>
+
+    <h3>6.6 Filtrado y búsqueda</h3>
+    <p>Barra de filtros en la lista de recetas que permite filtrar por categoría, dificultad y término de búsqueda. Los filtros se preservan durante la paginación mediante parámetros GET en las URLs.</p>
+
+    <h3>6.7 Logging</h3>
+    <p>Sistema de logging configurado con dos handlers: archivo (<code>proyecto.log</code>) y consola. Se registran las acciones principales: creación, actualización y eliminación de recetas, comentarios, exportaciones, login/registro y errores.</p>
+
+    <!-- 7. SERVICIOS -->
+    <h2 id="servicios">7. Capa de servicios</h2>
+    <p>
+        La lógica de negocio se encapsula en dos servicios principales dentro de <code>services.py</code>, separando las responsabilidades de las vistas.
+    </p>
+
+    <div class="tarjeta">
+        <h3 style="margin-top: 0;">RecetaService</h3>
+        <p>Métodos estáticos para gestionar recetas:</p>
+        <ul>
+            <li><code>listar(filtros)</code> — Consulta con filtros dinámicos (categoría, dificultad, búsqueda) usando <code>Q objects</code> y <code>select_related</code>.</li>
+            <li><code>obtener(pk)</code> — Obtención de receta con <code>prefetch_related</code> para ingredientes, imágenes y comentarios.</li>
+            <li><code>crear(datos, ingredientes_data)</code> — Creación de receta con sus ingredientes asociados.</li>
+            <li><code>actualizar(receta, datos)</code> — Actualización mediante <code>setattr</code> dinámico.</li>
+            <li><code>eliminar(receta)</code> — Eliminación con registro de log.</li>
+            <li><code>estadisticas()</code> — Estadísticas generales usando <code>Avg</code>, <code>Count</code> y <code>annotate</code>.</li>
+        </ul>
+    </div>
+
+    <div class="tarjeta">
+        <h3 style="margin-top: 0;">ExportService</h3>
+        <p>Exportación de todas las tablas de la base de datos:</p>
+        <ul>
+            <li><code>exportar_csv(destino)</code> — Genera 8 archivos CSV (uno por modelo) usando <code>DataFrameManager</code>.</li>
+            <li><code>exportar_xlsx(destino)</code> — Genera un archivo Excel con 8 hojas (una por modelo) usando <code>openpyxl</code>.</li>
+            <li><code>exportar_todo(destino)</code> — Ejecuta ambas exportaciones.</li>
+        </ul>
+    </div>
+
+    <!-- 8. EXPORTACIÓN -->
+    <h2 id="exportacion">8. Exportación de datos con django-pandas</h2>
+    <p>
+        Todos los modelos incluyen un <code>DataFrameManager</code> (alias <code>df</code>) proporcionado por <code>django-pandas</code>. Esto permite convertir cualquier QuerySet a un DataFrame de pandas con una sola llamada:
+    </p>
+    <pre>df = modelo.df.all().to_dataframe()</pre>
+    <p>Los datos se exportan a:</p>
+    <ul>
+        <li><strong>CSV</strong>: 8 archivos individuales con codificación <code>utf-8-sig</code> (compatible con Excel en español).</li>
+        <li><strong>XLSX</strong>: 1 archivo con 8 hojas, generado con <code>pd.ExcelWriter</code> y motor <code>openpyxl</code>.</li>
+    </ul>
+    <p>La interfaz de exportación permite al usuario seleccionar el formato deseado (CSV, XLSX o ambos) mediante un formulario.</p>
+
+    <!-- 9. INTERFAZ -->
+    <h2 id="interfaz">9. Interfaz de usuario</h2>
+    <p>
+        La interfaz se construye con Bootstrap 5 para la estructura responsive y una hoja de estilos personalizada (<code>estilos.css</code>) que define la identidad visual.
+    </p>
+
+    <h3>Paleta de colores</h3>
+    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin: 1rem 0;">
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #c0694f; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Primario</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #d4a574; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Acento</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #f0e6da; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Suave</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #5a8a5e; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Éxito</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #b55454; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Peligro</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border-radius: 8px; background: #3a3530; margin-bottom: 4px;"></div>
+            <span style="font-size: 0.75rem; color: var(--texto-suave);">Navbar</span>
+        </div>
+    </div>
+
+    <h3>Tipografía</h3>
+    <ul>
+        <li><strong>Playfair Display</strong> (600, 700) — Títulos y encabezados.</li>
+        <li><strong>Source Sans 3</strong> (300, 400, 500, 600) — Texto del cuerpo, etiquetas y formularios.</li>
+    </ul>
+
+    <h3>Componentes principales</h3>
+    <ul>
+        <li><strong>Navbar</strong>: Barra de navegación oscura con enlaces condicionales según la sesión del usuario.</li>
+        <li><strong>Hero</strong>: Sección de bienvenida con degradado y tarjetas de estadísticas.</li>
+        <li><strong>Tarjetas de receta</strong>: Imagen placeholder con degradado, etiquetas de categoría/dificultad/tiempo, autor y fecha.</li>
+        <li><strong>Filtros</strong>: Barra de filtros con selects y búsqueda en la lista de recetas.</li>
+        <li><strong>Formularios</strong>: Campos con clases Bootstrap, validación visual y mensajes de error.</li>
+        <li><strong>Tablas CRUD</strong>: Diseño con cabecera estilizada para listados de categorías e ingredientes.</li>
+    </ul>
+
+    <h3>Template tags personalizados</h3>
+    <div style="overflow-x: auto;">
+    <table>
+        <thead><tr><th>Filtro</th><th>Entrada</th><th>Salida</th><th>Uso</th></tr></thead>
+        <tbody>
+            <tr><td><code>estrellas</code></td><td>4</td><td>★★★★☆</td><td>Mostrar puntuación visual en comentarios</td></tr>
+            <tr><td><code>minutos_a_tiempo</code></td><td>90</td><td>1h 30min</td><td>Formato legible del tiempo de preparación</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- 10. MANUAL DE USUARIO -->
+    <h2 id="manual">10. Manual de usuario</h2>
+
+    <div class="tarjeta">
+        <h3 style="margin-top: 0;">Instalación y puesta en marcha</h3>
+        <ol>
+            <li>Clonar el repositorio.</li>
+            <li>Crear un entorno virtual: <code>python -m venv venv</code></li>
+            <li>Activar el entorno: <code>venv\Scripts\activate</code> (Windows)</li>
+            <li>Instalar dependencias: <code>pip install -r requirements.txt</code></li>
+            <li>Ejecutar migraciones: <code>python manage.py migrate</code></li>
+            <li>Cargar datos de ejemplo: <code>python manage.py cargar_datos</code></li>
+            <li>Iniciar el servidor: <code>python manage.py runserver</code></li>
+            <li>Abrir en el navegador: <code>http://127.0.0.1:8000/</code></li>
+        </ol>
+    </div>
+
+    <div class="tarjeta">
+        <h3 style="margin-top: 0;">Uso de la aplicación</h3>
+        <ul>
+            <li><strong>Página de inicio</strong>: Muestra estadísticas generales y las últimas recetas publicadas.</li>
+            <li><strong>Recetas</strong>: Lista con filtros por categoría, dificultad y búsqueda. Se pueden crear, editar y eliminar recetas. Al crear una receta se añaden ingredientes dinámicamente con el botón "Añadir ingrediente".</li>
+            <li><strong>Categorías / Ingredientes</strong>: CRUD completo accesible desde la barra de navegación.</li>
+            <li><strong>Favoritos</strong>: Hacer clic en el corazón para guardar/quitar una receta de favoritos. Accesible desde el menú "Favoritas" (requiere iniciar sesión).</li>
+            <li><strong>Comentarios</strong>: En la página de detalle de cada receta se puede añadir un comentario con puntuación del 1 al 5.</li>
+            <li><strong>Exportar</strong>: Acceder a la sección "Exportar" para descargar los datos en CSV, XLSX o ambos formatos.</li>
+            <li><strong>Registro / Login</strong>: Crear una cuenta o iniciar sesión para acceder a funcionalidades como favoritos y comentarios.</li>
+        </ul>
+    </div>
+
+    <!-- 11. JUSTIFICACIÓN TÉCNICA -->
+    <h2 id="justificacion">11. Justificación técnica</h2>
+
+    <h3>Decisiones de diseño</h3>
+    <ul>
+        <li><strong>Class-Based Views</strong>: Se eligieron las CBV de Django por la reutilización de código que ofrecen (herencia, mixins) y porque se ajustan mejor a operaciones CRUD estándar que las vistas basadas en funciones.</li>
+        <li><strong>Capa de servicios</strong>: Se separó la lógica de negocio en <code>RecetaService</code> y <code>ExportService</code> para mantener las vistas limpias y facilitar pruebas unitarias futuras.</li>
+        <li><strong>Autenticación por sesiones</strong>: Se implementó un sistema de autenticación personalizado basado en sesiones de Django en lugar de usar <code>django.contrib.auth</code>, para demostrar el manejo manual de sesiones y hashing.</li>
+        <li><strong>InlineFormSet</strong>: Para la relación N:M entre recetas e ingredientes se usa <code>inlineformset_factory</code> con formularios dinámicos en JavaScript, permitiendo añadir y quitar ingredientes sin recargar la página.</li>
+        <li><strong>DataFrameManager</strong>: Cada modelo incluye un <code>DataFrameManager</code> de <code>django-pandas</code> para convertir QuerySets a DataFrames de forma directa, facilitando la exportación masiva de datos.</li>
+        <li><strong>SQLite3</strong>: Se eligió por ser la base de datos por defecto de Django, sin necesidad de configuración adicional, adecuada para el alcance del proyecto.</li>
+        <li><strong>Imágenes por URL</strong>: El modelo <code>ImagenReceta</code> almacena URLs externas en lugar de archivos locales, evitando la necesidad de almacenamiento de medios en el servidor, lo cual es compatible con despliegues en plataformas serverless.</li>
+    </ul>
+
+    <h3>Patrones aplicados</h3>
+    <ul>
+        <li><strong>MVT (Model-View-Template)</strong>: Patrón arquitectónico de Django para la separación de responsabilidades.</li>
+        <li><strong>Service Layer</strong>: Capa intermedia entre vistas y modelos que encapsula la lógica de negocio.</li>
+        <li><strong>Mixin (UsuarioMixin)</strong>: Reutilización de la lógica de obtención del usuario activo en múltiples vistas.</li>
+        <li><strong>Template Inheritance</strong>: Template base (<code>base.html</code>) del que heredan todas las páginas.</li>
+        <li><strong>Custom Template Tags</strong>: Filtros reutilizables para formatear datos en las plantillas.</li>
+    </ul>
+
+    <h3>Configuración relevante</h3>
+    <ul>
+        <li><code>LANGUAGE_CODE = 'es'</code> — Interfaz de administración y mensajes en español.</li>
+        <li><code>TIME_ZONE = 'Europe/Madrid'</code> — Zona horaria española.</li>
+        <li><code>USE_TZ = False</code> — Fechas sin conversión de zona horaria para simplificar el manejo.</li>
+        <li><code>ALLOWED_HOSTS = ['*']</code> — Permite despliegue en cualquier dominio.</li>
+        <li><strong>Logging</strong>: Logger <code>"proyecto"</code> con formato detallado, nivel DEBUG en consola e INFO en archivo.</li>
+    </ul>
+
+</div>
+
+</body>
+</html>

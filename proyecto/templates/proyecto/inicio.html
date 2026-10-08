@@ -4,88 +4,86 @@
 {% block titulo %}Inicio - Gestor de Recetas{% endblock %}
 
 {% block contenido %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1>Bienvenido al Gestor de Recetas</h1>
-        <p class="lead">Organiza, comparte y descubre nuevas recetas.</p>
-    </div>
+<div class="hero-section text-center" style="margin: -1.5rem -0.75rem 2rem; padding: 3rem 1rem; border-radius: 0 0 20px 20px;">
+    <h1>Bienvenido al Gestor de Recetas</h1>
+    <p class="lead">Organiza, comparte y descubre nuevas recetas</p>
+    <a href="{% url 'receta_crear' %}" class="btn btn-primario mt-2">
+        <i class="bi bi-plus-lg"></i> Nueva Receta
+    </a>
 </div>
 
 {% if estadisticas %}
-<div class="row mb-4">
-    <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <h2>{{ estadisticas.total_recetas }}</h2>
-                <p class="mb-0">Recetas</p>
-            </div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card recetas">
+            <div class="stat-numero">{{ estadisticas.total_recetas }}</div>
+            <div class="stat-label">Recetas</div>
         </div>
     </div>
-    <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center bg-success text-white">
-            <div class="card-body">
-                <h2>{{ estadisticas.total_categorias }}</h2>
-                <p class="mb-0">Categorias</p>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card categorias">
+            <div class="stat-numero">{{ estadisticas.total_categorias }}</div>
+            <div class="stat-label">Categorías</div>
         </div>
     </div>
-    <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center bg-info text-white">
-            <div class="card-body">
-                <h2>{{ estadisticas.total_ingredientes }}</h2>
-                <p class="mb-0">Ingredientes</p>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card ingredientes">
+            <div class="stat-numero">{{ estadisticas.total_ingredientes }}</div>
+            <div class="stat-label">Ingredientes</div>
         </div>
     </div>
-    <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center bg-warning text-dark">
-            <div class="card-body">
-                <h2>{{ estadisticas.total_comentarios }}</h2>
-                <p class="mb-0">Comentarios</p>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card comentarios">
+            <div class="stat-numero">{{ estadisticas.total_comentarios }}</div>
+            <div class="stat-label">Comentarios</div>
         </div>
     </div>
 </div>
 {% endif %}
 
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Ultimas recetas</h3>
-            <a href="{% url 'receta_crear' %}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Nueva Receta
-            </a>
-        </div>
-        {% if ultimas_recetas %}
-        <div class="row">
-            {% for receta in ultimas_recetas %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ receta.titulo }}</h5>
-                        <p class="card-text text-muted">
-                            {% if receta.categoria %}
-                            <span class="badge bg-secondary">{{ receta.categoria }}</span>
-                            {% endif %}
-                            <span class="badge bg-info">{{ receta.get_dificultad_display }}</span>
-                            <span class="badge bg-light text-dark">
-                                <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
-                            </span>
-                        </p>
-                        <p class="card-text">{{ receta.descripcion|truncatechars:100 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-sm btn-outline-primary">Ver receta</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="alert alert-info">
-            No hay recetas todavia. <a href="{% url 'receta_crear' %}">Crea la primera</a>.
-        </div>
-        {% endif %}
-    </div>
+<div class="seccion-titulo">
+    <h3>Últimas recetas</h3>
+    <a href="{% url 'receta_lista' %}" class="btn btn-outline-primario btn-sm">Ver todas</a>
 </div>
+
+{% if ultimas_recetas %}
+<div class="row g-4">
+    {% for receta in ultimas_recetas %}
+    <div class="col-md-4">
+        <div class="card receta-card h-100">
+            <div class="card-img-placeholder">
+                <i class="bi bi-egg-fried"></i>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'receta_detalle' receta.pk %}">{{ receta.titulo }}</a>
+                </h5>
+                <div class="receta-meta">
+                    {% if receta.categoria %}
+                    <span class="etiqueta categoria">{{ receta.categoria }}</span>
+                    {% endif %}
+                    <span class="etiqueta dificultad">{{ receta.get_dificultad_display }}</span>
+                    <span class="etiqueta tiempo">
+                        <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
+                    </span>
+                </div>
+                <p class="receta-descripcion">{{ receta.descripcion|truncatechars:100 }}</p>
+                <p class="receta-autor">
+                    <i class="bi bi-person"></i> {{ receta.usuario }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-sm btn-outline-primario">Ver receta</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-journal-plus"></i>
+    <p>No hay recetas todavía.</p>
+    <a href="{% url 'receta_crear' %}" class="btn btn-primario">Crea la primera</a>
+</div>
+{% endif %}
 {% endblock %}

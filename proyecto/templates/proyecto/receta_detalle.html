@@ -4,37 +4,61 @@
 {% block titulo %}{{ receta.titulo }} - Gestor de Recetas{% endblock %}
 
 {% block contenido %}
-<div class="row">
-    <div class="col-md-8">
-        <h1>{{ receta.titulo }}</h1>
-        <p class="text-muted">
-            <i class="bi bi-person"></i> {{ receta.usuario }}
-            &middot; {{ receta.fecha_creacion|date:"d/m/Y H:i" }}
-            {% if receta.categoria %}
-            &middot; <span class="badge bg-secondary">{{ receta.categoria }}</span>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="detalle-imagen-placeholder">
+            <i class="bi bi-egg-fried"></i>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h1>{{ receta.titulo }}</h1>
+                <div class="d-flex gap-2 flex-wrap align-items-center mt-1">
+                    <span class="receta-autor">
+                        <i class="bi bi-person"></i> {{ receta.usuario }}
+                        &middot; {{ receta.fecha_creacion|date:"d/m/Y H:i" }}
+                    </span>
+                    {% if receta.categoria %}
+                    <span class="etiqueta categoria">{{ receta.categoria }}</span>
+                    {% endif %}
+                    <span class="etiqueta dificultad">{{ receta.get_dificultad_display }}</span>
+                    <span class="etiqueta tiempo">
+                        <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
+                    </span>
+                </div>
+            </div>
+            {% if request.session.usuario_id %}
+            <form method="post" action="{% url 'toggle_favorito' receta.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-favorito {% if es_favorita %}activo{% endif %}"
+                        style="font-size: 1.6rem;"
+                        title="{% if es_favorita %}Quitar de favoritos{% else %}Añadir a favoritos{% endif %}">
+                    <i class="bi {% if es_favorita %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-favorito" style="font-size: 1.6rem; text-decoration: none;" title="Inicia sesión para guardar en favoritos">
+                <i class="bi bi-heart"></i>
+            </a>
             {% endif %}
-            <span class="badge bg-info">{{ receta.get_dificultad_display }}</span>
-            <span class="badge bg-light text-dark">
-                <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
-            </span>
-        </p>
+        </div>
 
         {% if receta.descripcion %}
-        <p class="lead">{{ receta.descripcion }}</p>
+        <p class="lead" style="color: var(--color-texto-claro);">{{ receta.descripcion }}</p>
         {% endif %}
 
-        <h3 class="mt-4">Instrucciones</h3>
         <div class="card mb-4">
-            <div class="card-body">
-                {{ receta.instrucciones|linebreaks }}
+            <div class="card-body" style="padding: 1.5rem;">
+                <h4 style="margin-bottom: 1rem;"><i class="bi bi-list-ol"></i> Instrucciones</h4>
+                <div style="line-height: 1.8;">{{ receta.instrucciones|linebreaks }}</div>
             </div>
         </div>
 
         <div class="d-flex gap-2 mb-4">
-            <a href="{% url 'receta_editar' receta.pk %}" class="btn btn-warning">
+            <a href="{% url 'receta_editar' receta.pk %}" class="btn btn-outline-warning">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            <a href="{% url 'receta_eliminar' receta.pk %}" class="btn btn-danger">
+            <a href="{% url 'receta_eliminar' receta.pk %}" class="btn btn-outline-danger">
                 <i class="bi bi-trash"></i> Eliminar
             </a>
             <a href="{% url 'receta_lista' %}" class="btn btn-outline-secondary">
@@ -42,65 +66,61 @@
             </a>
         </div>
 
-        <h3>Comentarios</h3>
+        <h3><i class="bi bi-chat-dots"></i> Comentarios</h3>
         {% for comentario in receta.comentarios.all %}
-        <div class="card mb-2">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <strong>{{ comentario.usuario }}</strong>
-                    <span class="text-warning">{{ comentario.puntuacion|estrellas }}</span>
-                </div>
-                <p class="mb-1">{{ comentario.contenido }}</p>
-                <small class="text-muted">{{ comentario.fecha_comentario|date:"d/m/Y H:i" }}</small>
+        <div class="comentario-card">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong><i class="bi bi-person"></i> {{ comentario.usuario }}</strong>
+                <span class="puntuacion-estrella">{{ comentario.puntuacion|estrellas }}</span>
             </div>
+            <p class="mb-1">{{ comentario.contenido }}</p>
+            <small style="color: var(--color-texto-claro);">{{ comentario.fecha_comentario|date:"d/m/Y H:i" }}</small>
         </div>
         {% empty %}
-        <p class="text-muted">No hay comentarios todavia.</p>
+        <p style="color: var(--color-texto-claro);">No hay comentarios todavía. Sé el primero en opinar.</p>
         {% endfor %}
 
         <div class="card mt-3">
-            <div class="card-header">Dejar un comentario</div>
             <div class="card-body">
+                <h5><i class="bi bi-pencil-square"></i> Dejar un comentario</h5>
                 <form method="post" action="{% url 'comentario_crear' receta.pk %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         {{ comentario_form.contenido }}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Puntuacion (1-5)</label>
+                        <label class="form-label">Puntuación (1-5)</label>
                         {{ comentario_form.puntuacion }}
                     </div>
-                    <button type="submit" class="btn btn-primary">Enviar comentario</button>
+                    <button type="submit" class="btn btn-primario">Enviar comentario</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Ingredientes</h5>
-            </div>
-            <ul class="list-group list-group-flush">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 style="margin-bottom: 1rem;"><i class="bi bi-basket3"></i> Ingredientes</h5>
                 {% for ri in ingredientes %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="ingrediente-item">
                     <span>
                         {{ ri.ingrediente.nombre }}
-                        {% if ri.opcional %}<small class="text-muted">(opcional)</small>{% endif %}
+                        {% if ri.opcional %}<small style="color: var(--color-texto-claro);">(opcional)</small>{% endif %}
                     </span>
-                    <span class="badge bg-primary rounded-pill">{{ ri.cantidad }} {{ ri.unidad }}</span>
-                </li>
+                    <span class="etiqueta">{{ ri.cantidad }} {{ ri.unidad }}</span>
+                </div>
                 {% empty %}
-                <li class="list-group-item text-muted">Sin ingredientes registrados.</li>
+                <p style="color: var(--color-texto-claro);">Sin ingredientes registrados.</p>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
 
-        <div class="card mt-3">
-            <div class="card-body text-center">
-                <h5>Puntuacion media</h5>
-                <span class="text-warning fs-4">{{ receta.puntuacion_media|estrellas }}</span>
-                <p class="text-muted">{{ receta.puntuacion_media }} / 5</p>
+        <div class="card">
+            <div class="card-body text-center" style="padding: 1.5rem;">
+                <h5><i class="bi bi-star"></i> Puntuación media</h5>
+                <div class="puntuacion-estrella" style="font-size: 1.6rem;">{{ receta.puntuacion_media|estrellas }}</div>
+                <p style="color: var(--color-texto-claro); margin-top: 0.3rem;">{{ receta.puntuacion_media }} / 5</p>
             </div>
         </div>
     </div>

@@ -1,0 +1,55 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Registro - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="auth-container">
+    <div class="card">
+        <h1><i class="bi bi-person-plus"></i> Crear cuenta</h1>
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                <div class="invalid-feedback d-block">{{ form.nombre.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                {{ form.contrasena }}
+                {% if form.contrasena.errors %}
+                <div class="invalid-feedback d-block">{{ form.contrasena.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Confirmar contraseña</label>
+                {{ form.contrasena_confirmacion }}
+                {% if form.contrasena_confirmacion.errors %}
+                <div class="invalid-feedback d-block">{{ form.contrasena_confirmacion.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primario w-100">Registrarse</button>
+        </form>
+        <p class="text-center mt-3 mb-0" style="font-size: 0.9rem;">
+            ¿Ya tienes cuenta? <a href="{% url 'login' %}" style="color: var(--color-primario);">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

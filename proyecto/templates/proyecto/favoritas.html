@@ -1,0 +1,55 @@
+{% extends "proyecto/base.html" %}
+{% load recetas_tags %}
+
+{% block titulo %}Mis Favoritas - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="seccion-titulo">
+    <h1><i class="bi bi-heart"></i> Mis Favoritas</h1>
+</div>
+
+{% if recetas %}
+<div class="row g-4">
+    {% for receta in recetas %}
+    <div class="col-md-4">
+        <div class="card receta-card h-100">
+            <div class="card-img-placeholder">
+                <i class="bi bi-egg-fried"></i>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'receta_detalle' receta.pk %}">{{ receta.titulo }}</a>
+                </h5>
+                <div class="receta-meta">
+                    {% if receta.categoria %}
+                    <span class="etiqueta categoria">{{ receta.categoria }}</span>
+                    {% endif %}
+                    <span class="etiqueta dificultad">{{ receta.get_dificultad_display }}</span>
+                    <span class="etiqueta tiempo">
+                        <i class="bi bi-clock"></i> {{ receta.tiempo_preparacion|minutos_a_tiempo }}
+                    </span>
+                </div>
+                <p class="receta-descripcion">{{ receta.descripcion|truncatechars:120 }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'receta_detalle' receta.pk %}" class="btn btn-sm btn-outline-primario">Ver receta</a>
+                <form method="post" action="{% url 'toggle_favorito' receta.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'favoritas' %}">
+                    <button type="submit" class="btn-favorito activo" title="Quitar de favoritos">
+                        <i class="bi bi-heart-fill"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-heart"></i>
+    <p>No tienes recetas favoritas todavía.</p>
+    <a href="{% url 'receta_lista' %}" class="btn btn-outline-primario">Explorar recetas</a>
+</div>
+{% endif %}
+{% endblock %}

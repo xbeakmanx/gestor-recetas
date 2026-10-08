@@ -3,7 +3,9 @@
 {% block titulo %}{{ titulo_pagina }} - Gestor de Recetas{% endblock %}
 
 {% block contenido %}
-<h1>{{ titulo_pagina }}</h1>
+<div class="seccion-titulo">
+    <h1>{{ titulo_pagina }}</h1>
+</div>
 
 <form method="post" novalidate>
     {% csrf_token %}
@@ -21,20 +23,20 @@
     </div>
     {% endif %}
 
-    <div class="row">
+    <div class="row g-4">
         <div class="col-md-8">
             <div class="card mb-3">
-                <div class="card-header">Datos de la receta</div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 1.5rem;">
+                    <h5 style="margin-bottom: 1rem;">Datos de la receta</h5>
                     <div class="mb-3">
-                        <label class="form-label">Titulo</label>
+                        <label class="form-label">Título</label>
                         {{ form.titulo }}
                         {% if form.titulo.errors %}
                         <div class="invalid-feedback d-block">{{ form.titulo.errors.0 }}</div>
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Descripcion</label>
+                        <label class="form-label">Descripción</label>
                         {{ form.descripcion }}
                     </div>
                     <div class="mb-3">
@@ -46,14 +48,19 @@
         </div>
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header">Detalles</div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 1.5rem;">
+                    <h5 style="margin-bottom: 1rem;">Detalles</h5>
                     <div class="mb-3">
-                        <label class="form-label">Categoria</label>
-                        {{ form.categoria }}
+                        <label class="form-label">Categoría</label>
+                        <div class="d-flex gap-2">
+                            <div class="flex-grow-1">{{ form.categoria }}</div>
+                            <a href="{% url 'categoria_crear' %}?next=receta" class="btn btn-sm btn-outline-primario" title="Nueva categoría" style="white-space: nowrap;">
+                                <i class="bi bi-plus"></i>
+                            </a>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Tiempo de preparacion (min)</label>
+                        <label class="form-label">Tiempo de preparación (min)</label>
                         {{ form.tiempo_preparacion }}
                         {% if form.tiempo_preparacion.errors %}
                         <div class="invalid-feedback d-block">{{ form.tiempo_preparacion.errors.0 }}</div>
@@ -69,40 +76,76 @@
     </div>
 
     <div class="card mb-3">
-        <div class="card-header">Ingredientes</div>
-        <div class="card-body">
+        <div class="card-body" style="padding: 1.5rem;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Ingredientes</h5>
+                <button type="button" id="btn-agregar-ingrediente" class="btn btn-sm btn-outline-primario">
+                    <i class="bi bi-plus-lg"></i> Añadir ingrediente
+                </button>
+            </div>
             {{ formset.management_form }}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Ingrediente</th>
-                        <th>Cantidad</th>
-                        <th>Unidad</th>
-                        <th>Opcional</th>
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for f in formset %}
-                    <tr>
-                        <td>{{ f.ingrediente }}</td>
-                        <td>{{ f.cantidad }}</td>
-                        <td>{{ f.unidad }}</td>
-                        <td>{{ f.opcional }}</td>
-                        <td>{{ f.DELETE }}</td>
-                        {{ f.id }}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div id="ingredientes-container">
+                {% for f in formset %}
+                <div class="ingrediente-fila row g-2 mb-2 align-items-center {% if f.instance.pk and f.DELETE.value %}d-none{% endif %}">
+                    <div class="col-md-3">{{ f.ingrediente }}</div>
+                    <div class="col-md-2">{{ f.cantidad }}</div>
+                    <div class="col-md-2">{{ f.unidad }}</div>
+                    <div class="col-md-2 d-flex align-items-center gap-2">
+                        <label class="form-check-label">Opcional</label>
+                        {{ f.opcional }}
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center gap-2">
+                        {{ f.DELETE }}
+                        <label class="form-check-label" style="font-size: 0.85rem; color: var(--color-peligro);">Quitar</label>
+                    </div>
+                    {{ f.id }}
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
     <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primario">
             <i class="bi bi-check-lg"></i> Guardar
         </button>
         <a href="{% url 'receta_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
     </div>
 </form>
+
+<script>
+document.getElementById('btn-agregar-ingrediente').addEventListener('click', function() {
+    var container = document.getElementById('ingredientes-container');
+    var totalForms = document.getElementById('id_receta_ingredientes-TOTAL_FORMS');
+    var formNum = parseInt(totalForms.value);
+
+    var filas = container.querySelectorAll('.ingrediente-fila');
+    var lastFila = filas[filas.length - 1];
+    var newFila = lastFila.cloneNode(true);
+
+    newFila.classList.remove('d-none');
+    newFila.innerHTML = newFila.innerHTML.replace(
+        new RegExp('receta_ingredientes-' + (formNum - 1) + '-', 'g'),
+        'receta_ingredientes-' + formNum + '-'
+    );
+    newFila.innerHTML = newFila.innerHTML.replace(
+        new RegExp('id_receta_ingredientes-' + (formNum - 1) + '-', 'g'),
+        'id_receta_ingredientes-' + formNum + '-'
+    );
+
+    var selects = newFila.querySelectorAll('select');
+    selects.forEach(function(s) { s.selectedIndex = 0; });
+    var inputs = newFila.querySelectorAll('input:not([type="checkbox"]):not([type="hidden"])');
+    inputs.forEach(function(i) { i.value = ''; });
+    var checkboxes = newFila.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function(c) { c.checked = false; });
+    var hiddens = newFila.querySelectorAll('input[type="hidden"]');
+    hiddens.forEach(function(h) {
+        if (h.name.endsWith('-id')) h.value = '';
+    });
+
+    container.appendChild(newFila);
+    totalForms.value = formNum + 1;
+});
+</script>
 {% endblock %}

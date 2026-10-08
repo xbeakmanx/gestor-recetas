@@ -17,7 +17,7 @@ class RecetaForm(forms.ModelForm):
             "descripcion": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 3,
-                "placeholder": "Breve descripcion de la receta",
+                "placeholder": "Breve descripción de la receta",
             }),
             "instrucciones": forms.Textarea(attrs={
                 "class": "form-control",
@@ -33,10 +33,14 @@ class RecetaForm(forms.ModelForm):
             "dificultad": forms.Select(attrs={"class": "form-select"}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["categoria"].empty_label = "Seleccionar categoría"
+
     def clean_titulo(self):
         titulo = self.cleaned_data["titulo"].strip()
         if len(titulo) < 3:
-            raise forms.ValidationError("El titulo debe tener al menos 3 caracteres.")
+            raise forms.ValidationError("El título debe tener al menos 3 caracteres.")
         return titulo
 
     def clean_tiempo_preparacion(self):
@@ -55,12 +59,12 @@ class CategoriaForm(forms.ModelForm):
         widgets = {
             "nombre": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Nombre de la categoria",
+                "placeholder": "Nombre de la categoría",
             }),
             "descripcion": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 3,
-                "placeholder": "Descripcion opcional",
+                "placeholder": "Descripción opcional",
             }),
         }
 
@@ -107,7 +111,7 @@ class ComentarioForm(forms.ModelForm):
     def clean_puntuacion(self):
         puntuacion = self.cleaned_data["puntuacion"]
         if puntuacion < 1 or puntuacion > 5:
-            raise forms.ValidationError("La puntuacion debe estar entre 1 y 5.")
+            raise forms.ValidationError("La puntuación debe estar entre 1 y 5.")
         return puntuacion
 
 
@@ -116,18 +120,23 @@ class RecetaIngredienteForm(forms.ModelForm):
         model = RecetaIngrediente
         fields = ["ingrediente", "cantidad", "unidad", "opcional"]
         widgets = {
-            "ingrediente": forms.Select(attrs={"class": "form-select"}),
+            "ingrediente": forms.Select(attrs={"class": "form-select form-select-sm"}),
             "cantidad": forms.NumberInput(attrs={
-                "class": "form-control",
+                "class": "form-control form-control-sm",
                 "min": 0.01,
                 "step": 0.01,
+                "placeholder": "Cantidad",
             }),
             "unidad": forms.TextInput(attrs={
-                "class": "form-control",
+                "class": "form-control form-control-sm",
                 "placeholder": "Ej: g, ml, unidad",
             }),
             "opcional": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["ingrediente"].empty_label = "Seleccionar"
 
 
 RecetaIngredienteFormSet = forms.inlineformset_factory(
@@ -137,3 +146,62 @@ RecetaIngredienteFormSet = forms.inlineformset_factory(
     extra=3,
     can_delete=True,
 )
+
+
+class RegistroForm(forms.Form):
+    nombre = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Tu nombre completo",
+        }),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "correo@ejemplo.com",
+        }),
+    )
+    contrasena = forms.CharField(
+        min_length=6,
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Mínimo 6 caracteres",
+        }),
+    )
+    contrasena_confirmacion = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Repite la contraseña",
+        }),
+    )
+
+    def clean_email(self):
+        from .models import Usuario
+        email = self.cleaned_data["email"]
+        if Usuario.objects.filter(email=email).exists():
+            raise forms.ValidationError("Ya existe un usuario con este correo.")
+        return email
+
+    def clean(self):
+        cleaned = super().clean()
+        contra = cleaned.get("contrasena")
+        confirmacion = cleaned.get("contrasena_confirmacion")
+        if contra and confirmacion and contra != confirmacion:
+            raise forms.ValidationError("Las contraseñas no coinciden.")
+        return cleaned
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "correo@ejemplo.com",
+        }),
+    )
+    contrasena = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Tu contraseña",
+        }),
+    )

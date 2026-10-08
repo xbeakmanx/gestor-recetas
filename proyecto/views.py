@@ -7,10 +7,13 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import HttpResponse, Http404
 
-from .models import Receta, Categoria, Ingrediente, Usuario, Comentario, RecetaIngrediente
+import hashlib
+
+from .models import Receta, Categoria, Ingrediente, Usuario, Comentario, RecetaIngrediente, Favorito
 from .forms import (
     RecetaForm, CategoriaForm, IngredienteForm,
     ComentarioForm, RecetaIngredienteFormSet,
+    RegistroForm, LoginForm,
 )
 from .services import RecetaService, ExportService
 
@@ -20,9 +23,15 @@ logger = logging.getLogger("proyecto")
 # --- Mixin para inyectar el usuario por defecto ---
 
 class UsuarioMixin:
-    """Obtiene o crea un usuario por defecto para asignar a las operaciones."""
+    """Obtiene el usuario de la sesión activa o crea uno por defecto."""
 
     def get_usuario(self):
+        usuario_id = self.request.session.get("usuario_id")
+        if usuario_id:
+            try:
+                return Usuario.objects.get(pk=usuario_id)
+            except Usuario.DoesNotExist:
+                pass
         usuario, _ = Usuario.objects.get_or_create(
             email="admin@recetas.com",
             defaults={
@@ -77,6 +86,11 @@ class RecetaListView(ListView):
             "dificultad": self.request.GET.get("dificultad", ""),
             "q": self.request.GET.get("q", ""),
         }
+        usuario_id = self.request.session.get("usuario_id")
+        if usuario_id:
+            context["favoritas_ids"] = set(
+                Favorito.objects.filter(usuario_id=usuario_id).values_list("receta_id", flat=True)
+            )
         return context
 
 
@@ -95,6 +109,11 @@ class RecetaDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["comentario_form"] = ComentarioForm()
         context["ingredientes"] = self.object.receta_ingredientes.select_related("ingrediente")
+        usuario_id = self.request.session.get("usuario_id")
+        if usuario_id:
+            context["es_favorita"] = Favorito.objects.filter(
+                usuario_id=usuario_id, receta=self.object
+            ).exists()
         return context
 
 
@@ -122,14 +141,14 @@ class RecetaCreateView(UsuarioMixin, CreateView):
                 self.object = form.save()
                 formset.instance = self.object
                 formset.save()
-                messages.success(self.request, f"Receta '{self.object.titulo}' creada correctamente.")
+                messages.success(self.request, f"Receta «{self.object.titulo}» creada correctamente.")
                 logger.info("Receta creada desde vista: %s", self.object.titulo)
                 return redirect(self.success_url)
             else:
                 return self.render_to_response(context)
         except Exception as e:
             logger.error("Error al crear receta: %s", str(e))
-            messages.error(self.request, "Error al crear la receta. Intentalo de nuevo.")
+            messages.error(self.request, "Error al crear la receta. Inténtalo de nuevo.")
             return self.form_invalid(form)
 
 
@@ -203,12 +222,15 @@ class CategoriaCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["titulo_pagina"] = "Nueva Categoria"
+        context["titulo_pagina"] = "Nueva Categoría"
         return context
 
     def form_valid(self, form):
-        messages.success(self.request, "Categoria creada correctamente.")
-        return super().form_valid(form)
+        messages.success(self.request, "Categoría creada correctamente.")
+        response = super().form_valid(form)
+        if self.request.GET.get("next") == "receta":
+            return redirect("receta_crear")
+        return response
 
 
 class CategoriaUpdateView(UpdateView):
@@ -219,11 +241,11 @@ class CategoriaUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["titulo_pagina"] = "Editar Categoria"
+        context["titulo_pagina"] = "Editar Categoría"
         return context
 
     def form_valid(self, form):
-        messages.success(self.request, "Categoria actualizada correctamente.")
+        messages.success(self.request, "Categoría actualizada correctamente.")
         return super().form_valid(form)
 
 
@@ -234,7 +256,7 @@ class CategoriaDeleteView(DeleteView):
     context_object_name = "categoria"
 
     def form_valid(self, form):
-        messages.success(self.request, "Categoria eliminada.")
+        messages.success(self.request, "Categoría eliminada.")
         return super().form_valid(form)
 
 
@@ -301,13 +323,13 @@ class ComentarioCreateView(UsuarioMixin, View):
                 comentario.usuario = self.get_usuario()
                 comentario.receta = receta
                 comentario.save()
-                messages.success(request, "Comentario anadido.")
+                messages.success(request, "Comentario añadido.")
                 logger.info("Comentario creado en receta: %s", receta.titulo)
             except Exception as e:
                 logger.error("Error al crear comentario: %s", str(e))
                 messages.error(request, "Error al guardar el comentario.")
         else:
-            messages.error(request, "Datos del comentario no validos.")
+            messages.error(request, "Datos del comentario no válidos.")
         return redirect("receta_detalle", pk=receta_pk)
 
 
@@ -335,3 +357,105 @@ class ExportarView(View):
             logger.error("Error en exportacion: %s", str(e))
             messages.error(request, f"Error al exportar: {str(e)}")
         return redirect("exportar")
+
+
+# --- Autenticación ---
+
+class RegistroView(View):
+    def get(self, request):
+        form = RegistroForm()
+        return render(request, "proyecto/registro.html", {"form": form})
+
+    def post(self, request):
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            try:
+                contrasena_hash = hashlib.sha256(
+                    form.cleaned_data["contrasena"].encode()
+                ).hexdigest()
+                usuario = Usuario.objects.create(
+                    nombre=form.cleaned_data["nombre"],
+                    email=form.cleaned_data["email"],
+                    contrasena_hash=contrasena_hash,
+                )
+                request.session["usuario_id"] = usuario.pk
+                request.session["usuario_nombre"] = usuario.nombre
+                messages.success(request, f"Bienvenido/a, {usuario.nombre}.")
+                logger.info("Usuario registrado: %s", usuario.email)
+                return redirect("inicio")
+            except Exception as e:
+                logger.error("Error en registro: %s", str(e))
+                messages.error(request, "Error al crear la cuenta.")
+        return render(request, "proyecto/registro.html", {"form": form})
+
+
+class LoginView(View):
+    def get(self, request):
+        form = LoginForm()
+        return render(request, "proyecto/login.html", {"form": form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            contrasena_hash = hashlib.sha256(
+                form.cleaned_data["contrasena"].encode()
+            ).hexdigest()
+            try:
+                usuario = Usuario.objects.get(email=email)
+                if usuario.contrasena_hash == contrasena_hash:
+                    request.session["usuario_id"] = usuario.pk
+                    request.session["usuario_nombre"] = usuario.nombre
+                    messages.success(request, f"Hola, {usuario.nombre}.")
+                    logger.info("Login exitoso: %s", email)
+                    return redirect("inicio")
+                else:
+                    logger.warning("Contraseña incorrecta para: %s", email)
+                    return render(request, "proyecto/login.html", {
+                        "form": form,
+                        "error": "Contraseña incorrecta.",
+                    })
+            except Usuario.DoesNotExist:
+                logger.warning("Intento de login con email no registrado: %s", email)
+                return render(request, "proyecto/login.html", {
+                    "form": form,
+                    "error": "No existe una cuenta con ese correo.",
+                })
+        return render(request, "proyecto/login.html", {"form": form})
+
+
+class LogoutView(View):
+    def get(self, request):
+        request.session.flush()
+        messages.success(request, "Sesión cerrada.")
+        return redirect("inicio")
+
+
+# --- Favoritos ---
+
+class ToggleFavoritoView(UsuarioMixin, View):
+    def post(self, request, receta_pk):
+        receta = get_object_or_404(Receta, pk=receta_pk)
+        usuario = self.get_usuario()
+        favorito = Favorito.objects.filter(usuario=usuario, receta=receta)
+        if favorito.exists():
+            favorito.delete()
+            messages.success(request, f"«{receta.titulo}» eliminada de favoritos.")
+        else:
+            Favorito.objects.create(usuario=usuario, receta=receta)
+            messages.success(request, f"«{receta.titulo}» añadida a favoritos.")
+        next_url = request.POST.get("next", "receta_lista")
+        if next_url.startswith("/"):
+            return redirect(next_url)
+        return redirect("receta_detalle", pk=receta_pk)
+
+
+class FavoritasView(UsuarioMixin, ListView):
+    template_name = "proyecto/favoritas.html"
+    context_object_name = "recetas"
+
+    def get_queryset(self):
+        usuario = self.get_usuario()
+        return Receta.objects.filter(
+            guardado_por__usuario=usuario
+        ).select_related("usuario", "categoria")

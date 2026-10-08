@@ -1,0 +1,40 @@
+{% extends "proyecto/base.html" %}
+
+{% block titulo %}Iniciar sesión - Gestor de Recetas{% endblock %}
+
+{% block contenido %}
+<div class="auth-container">
+    <div class="card">
+        <h1><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</h1>
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                {{ form.email }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                {{ form.contrasena }}
+            </div>
+            <button type="submit" class="btn btn-primario w-100">Entrar</button>
+        </form>
+        <p class="text-center mt-3 mb-0" style="font-size: 0.9rem;">
+            ¿No tienes cuenta? <a href="{% url 'registro' %}" style="color: var(--color-primario);">Regístrate</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

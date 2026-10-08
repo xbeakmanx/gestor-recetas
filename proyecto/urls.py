@@ -33,4 +33,13 @@ urlpatterns = [
 
     # Exportacion
     path('exportar/', views.ExportarView.as_view(), name='exportar'),
+
+    # Autenticación
+    path('registro/', views.RegistroView.as_view(), name='registro'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+
+    # Favoritos
+    path('recetas/<int:receta_pk>/favorito/', views.ToggleFavoritoView.as_view(), name='toggle_favorito'),
+    path('favoritas/', views.FavoritasView.as_view(), name='favoritas'),
 ]
