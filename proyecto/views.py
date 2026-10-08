@@ -20,11 +20,7 @@ from .services import RecetaService, ExportService
 logger = logging.getLogger("proyecto")
 
 
-# --- Mixin para inyectar el usuario por defecto ---
-
 class UsuarioMixin:
-    """Obtiene el usuario de la sesión activa o crea uno por defecto."""
-
     def get_usuario(self):
         usuario_id = self.request.session.get("usuario_id")
         if usuario_id:
@@ -42,8 +38,6 @@ class UsuarioMixin:
         return usuario
 
 
-# --- Pagina de inicio ---
-
 class InicioView(View):
     def get(self, request):
         try:
@@ -60,8 +54,6 @@ class InicioView(View):
             "ultimas_recetas": ultimas_recetas,
         })
 
-
-# --- CRUD de Recetas ---
 
 class RecetaListView(ListView):
     model = Receta
@@ -206,8 +198,6 @@ class RecetaDeleteView(DeleteView):
             return redirect(self.success_url)
 
 
-# --- CRUD de Categorias ---
-
 class CategoriaListView(ListView):
     model = Categoria
     template_name = "proyecto/categoria_lista.html"
@@ -260,8 +250,6 @@ class CategoriaDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-# --- CRUD de Ingredientes ---
-
 class IngredienteListView(ListView):
     model = Ingrediente
     template_name = "proyecto/ingrediente_lista.html"
@@ -311,8 +299,6 @@ class IngredienteDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-# --- Comentarios ---
-
 class ComentarioCreateView(UsuarioMixin, View):
     def post(self, request, receta_pk):
         receta = get_object_or_404(Receta, pk=receta_pk)
@@ -332,8 +318,6 @@ class ComentarioCreateView(UsuarioMixin, View):
             messages.error(request, "Datos del comentario no válidos.")
         return redirect("receta_detalle", pk=receta_pk)
 
-
-# --- Exportacion ---
 
 class ExportarView(View):
     def get(self, request):
@@ -358,8 +342,6 @@ class ExportarView(View):
             messages.error(request, f"Error al exportar: {str(e)}")
         return redirect("exportar")
 
-
-# --- Autenticación ---
 
 class RegistroView(View):
     def get(self, request):
@@ -430,8 +412,6 @@ class LogoutView(View):
         messages.success(request, "Sesión cerrada.")
         return redirect("inicio")
 
-
-# --- Favoritos ---
 
 class ToggleFavoritoView(UsuarioMixin, View):
     def post(self, request, receta_pk):

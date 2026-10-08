@@ -13,8 +13,6 @@ logger = logging.getLogger("proyecto")
 
 
 class RecetaService:
-    """Logica de negocio para gestionar recetas."""
-
     @staticmethod
     def listar(filtros=None):
         qs = Receta.objects.select_related("usuario", "categoria")
@@ -104,8 +102,6 @@ class RecetaService:
 
 
 class ExportService:
-    """Exportacion de datos a CSV y XLSX usando django-pandas."""
-
     MODELOS = {
         "usuarios": Usuario,
         "categorias": Categoria,
