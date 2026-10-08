@@ -60,7 +60,7 @@ proyecto-recetas/
 
 ## Memoria Técnica
 
-La documentación completa del proyecto se encuentra en [`memoria_tecnica.html`](memoria_tecnica.html). Incluye:
+La documentación completa del proyecto se encuentra en [`memoria_tecnica.html`](https://htmlpreview.github.io/?https://github.com/xbeakmanx/gestor-recetas/blob/main/memoria_tecnica.html). Incluye:
 
 - Diagrama de arquitectura del sistema
 - Diagrama entidad-relación de la base de datos
