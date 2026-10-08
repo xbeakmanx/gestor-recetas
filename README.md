@@ -31,6 +31,16 @@ cd gestor-recetas
 python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
+```
+
+Crear un archivo `.env` en la raíz del proyecto:
+
+```
+SECRET_KEY=tu-clave-secreta-aqui
+DEBUG=True
+```
+
+```bash
 python manage.py migrate
 python manage.py cargar_datos
 python manage.py runserver

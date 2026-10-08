@@ -1,10 +1,20 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-4arz%wd96!$)+uxs96yj*-^j0ii47t%r)1t3q*1owuebvo2@ra'
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    with open(env_path) as f:
+        for linea in f:
+            linea = linea.strip()
+            if linea and not linea.startswith('#') and '=' in linea:
+                clave, valor = linea.split('=', 1)
+                os.environ.setdefault(clave.strip(), valor.strip())
 
-DEBUG = True
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
