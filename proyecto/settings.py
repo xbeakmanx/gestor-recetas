@@ -31,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,6 +82,8 @@ USE_I18N = True
 USE_TZ = False
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -94,12 +97,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'archivo': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'proyecto.log',
-            'formatter': 'detallado',
-        },
         'consola': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -108,7 +105,7 @@ LOGGING = {
     },
     'loggers': {
         'proyecto': {
-            'handlers': ['archivo', 'consola'],
+            'handlers': ['consola'],
             'level': 'DEBUG',
             'propagate': False,
         },
