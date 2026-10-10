@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+:root {
+    --color-fondo: #faf8f5;
+    --color-texto: #2d2a26;
+    --color-texto-claro: #6b6560;
+    --color-primario: #c0694f;
+    --color-primario-hover: #a85a42;
+    --color-acento: #d4a574;
+    --color-acento-suave: #f0e6da;
+    --color-borde: #e8e0d8;
+    --color-tarjeta: #ffffff;
+    --color-exito: #5a8a5e;
+    --color-peligro: #b55454;
+    --color-info: #5a7a8a;
+    --color-nav: #3a3530;
+    --sombra-suave: 0 2px 12px rgba(45, 42, 38, 0.06);
+    --sombra-media: 0 4px 20px rgba(45, 42, 38, 0.1);
+    --radio: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    color: var(--color-texto);
+}
+
+h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+.navbar {
+    background: var(--color-nav) !important;
+    padding: 0.8rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.35rem !important;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.navbar-brand i {
+    font-size: 1.2rem;
+    color: var(--color-acento);
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: color 0.2s;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--color-nav) 0%, #52483e 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 20px 20px;
+}
+
+.hero-section h1 {
+    color: white;
+    font-size: 2.4rem;
+    margin-bottom: 0.3rem;
+}
+
+.hero-section .lead {
+    color: var(--color-acento);
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radio);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-media);
+}
+
+.stat-card .stat-numero {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+}
+
+.stat-card .stat-label {
+    font-size: 0.85rem;
+    color: var(--color-texto-claro);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.stat-card.recetas .stat-numero { color: var(--color-primario); }
+.stat-card.categorias .stat-numero { color: var(--color-exito); }
+.stat-card.ingredientes .stat-numero { color: var(--color-info); }
+.stat-card.comentarios .stat-numero { color: var(--color-acento); }
+
+.card {
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-suave);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: var(--color-tarjeta);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-media);
+}
+
+.receta-card {
+    position: relative;
+}
+
+.receta-card .card-img-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, var(--color-acento-suave), #e8d5c4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--color-acento);
+}
+
+.receta-card .card-body {
+    padding: 1.2rem;
+}
+
+.receta-card .card-title {
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+}
+
+.receta-card .card-title a {
+    color: var(--color-texto);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.receta-card .card-title a:hover {
+    color: var(--color-primario);
+}
+
+.receta-card .receta-meta {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.receta-card .receta-descripcion {
+    font-size: 0.9rem;
+    color: var(--color-texto-claro);
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+}
+
+.receta-card .receta-autor {
+    font-size: 0.82rem;
+    color: var(--color-texto-claro);
+}
+
+.receta-card .card-footer {
+    background: transparent;
+    border-top: 1px solid var(--color-borde);
+    padding: 0.7rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--color-acento-suave);
+    color: var(--color-texto);
+}
+
+.etiqueta.categoria {
+    background: #e8ecd8;
+    color: #4a5a3a;
+}
+
+.etiqueta.dificultad {
+    background: #dfe8ec;
+    color: #3a5a6a;
+}
+
+.etiqueta.tiempo {
+    background: var(--color-acento-suave);
+    color: #7a5a3a;
+}
+
+.btn-favorito {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s, transform 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+
+.btn-favorito:hover,
+.btn-favorito.activo {
+    color: #e25555;
+    transform: scale(1.15);
+}
+
+.btn-primario {
+    background-color: var(--color-primario);
+    border-color: var(--color-primario);
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    transition: all 0.2s;
+}
+
+.btn-primario:hover {
+    background-color: var(--color-primario-hover);
+    border-color: var(--color-primario-hover);
+    color: white;
+}
+
+.btn-outline-primario {
+    border: 1.5px solid var(--color-primario);
+    color: var(--color-primario);
+    border-radius: 8px;
+    font-weight: 500;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.btn-outline-primario:hover {
+    background: var(--color-primario);
+    color: white;
+}
+
+.seccion-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-acento-suave);
+}
+
+.filtros-bar {
+    background: white;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.form-control, .form-select {
+    border: 1.5px solid var(--color-borde);
+    border-radius: 8px;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(192, 105, 79, 0.12);
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-texto);
+    margin-bottom: 0.3rem;
+}
+
+.detalle-header {
+    position: relative;
+}
+
+.detalle-imagen-placeholder {
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, var(--color-acento-suave), #e8d5c4);
+    border-radius: var(--radio);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--color-acento);
+}
+
+.ingrediente-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0;
+    border-bottom: 1px dashed var(--color-borde);
+}
+
+.ingrediente-item:last-child {
+    border-bottom: none;
+}
+
+.comentario-card {
+    background: white;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.puntuacion-estrella {
+    color: var(--color-acento);
+    font-size: 1.1rem;
+}
+
+.alert {
+    border-radius: var(--radio);
+    border: none;
+    font-size: 0.92rem;
+}
+
+.alert-success {
+    background: #e8f0e8;
+    color: #3a5a3e;
+}
+
+.alert-danger {
+    background: #f0e8e8;
+    color: #6a3a3a;
+}
+
+.alert-info {
+    background: #e8ecf0;
+    color: #3a4a5a;
+}
+
+.pagination .page-link {
+    border: 1px solid var(--color-borde);
+    color: var(--color-primario);
+    border-radius: 6px;
+    margin: 0 2px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-primario);
+    border-color: var(--color-primario);
+}
+
+.auth-container {
+    max-width: 420px;
+    margin: 2rem auto;
+}
+
+.auth-container .card {
+    padding: 2rem;
+}
+
+.auth-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.tabla-crud {
+    border-radius: var(--radio);
+    overflow: hidden;
+    border: 1px solid var(--color-borde);
+}
+
+.tabla-crud thead th {
+    background: var(--color-acento-suave);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-texto);
+    border: none;
+    padding: 0.8rem;
+}
+
+.tabla-crud tbody td {
+    padding: 0.7rem 0.8rem;
+    vertical-align: middle;
+    font-size: 0.92rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-texto-claro);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--color-acento);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+        border-radius: 0;
+    }
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+    .receta-card .card-img-top,
+    .receta-card .card-img-placeholder {
+        height: 160px;
+    }
+}
