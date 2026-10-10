@@ -5,6 +5,12 @@ from .models import (
 )
 
 
+#Configuración del panel de administración:
+#   PARA CADA modelo (Usuario, Categoría, Ingrediente, Receta, Comentario, Favorito):
+#       REGISTRAR en el admin de Django
+#       DEFINIR columnas visibles en la lista
+#       DEFINIR campos de búsqueda y filtros
+#   Receta incluye líneas inline para editar ingredientes e imágenes directamente
 class RecetaIngredienteInline(admin.TabularInline):
     model = RecetaIngrediente
     extra = 1

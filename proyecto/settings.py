@@ -1,3 +1,13 @@
+#Configuración del proyecto:
+#   CARGAR variables de entorno desde archivo .env (si existe)
+#   PARA CADA línea EN .env:
+#       SI la línea tiene formato "CLAVE=VALOR":
+#           GUARDAR en variables de entorno del sistema
+#   SECRET_KEY ← OBTENER de variable de entorno
+#   DEBUG ← OBTENER de variable de entorno (por defecto False)
+#   CONFIGURAR: base de datos SQLite3, middleware, aplicaciones instaladas,
+#               plantillas, archivos estáticos con WhiteNoise, logging a consola,
+#               idioma español, zona horaria Europe/Madrid
 import os
 from pathlib import Path
 

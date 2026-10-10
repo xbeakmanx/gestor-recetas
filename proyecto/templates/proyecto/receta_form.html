@@ -7,17 +7,20 @@
     <h1>{{ titulo_pagina }}</h1>
 </div>
 
-<form method="post" novalidate>
+<form method="post">
     {% csrf_token %}
 
     {% if form.errors %}
     <div class="alert alert-danger">
         <strong>Corrige los siguientes errores:</strong>
         <ul class="mb-0">
-        {% for field, errors in form.errors.items %}
-            {% for error in errors %}
-            <li>{{ error }}</li>
+        {% for field in form %}
+            {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
             {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
         {% endfor %}
         </ul>
     </div>
@@ -29,19 +32,25 @@
                 <div class="card-body" style="padding: 1.5rem;">
                     <h5 style="margin-bottom: 1rem;">Datos de la receta</h5>
                     <div class="mb-3">
-                        <label class="form-label">Título</label>
+                        <label class="form-label">Título <span class="text-danger">*</span></label>
                         {{ form.titulo }}
                         {% if form.titulo.errors %}
                         <div class="invalid-feedback d-block">{{ form.titulo.errors.0 }}</div>
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Descripción</label>
+                        <label class="form-label">Descripción <span class="text-danger">*</span></label>
                         {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                        <div class="invalid-feedback d-block">{{ form.descripcion.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Instrucciones</label>
+                        <label class="form-label">Instrucciones <span class="text-danger">*</span></label>
                         {{ form.instrucciones }}
+                        {% if form.instrucciones.errors %}
+                        <div class="invalid-feedback d-block">{{ form.instrucciones.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -51,16 +60,19 @@
                 <div class="card-body" style="padding: 1.5rem;">
                     <h5 style="margin-bottom: 1rem;">Detalles</h5>
                     <div class="mb-3">
-                        <label class="form-label">Categoría</label>
+                        <label class="form-label">Categoría <span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
                             <div class="flex-grow-1">{{ form.categoria }}</div>
                             <a href="{% url 'categoria_crear' %}?next=receta" class="btn btn-sm btn-outline-primario" title="Nueva categoría" style="white-space: nowrap;">
                                 <i class="bi bi-plus"></i>
                             </a>
                         </div>
+                        {% if form.categoria.errors %}
+                        <div class="invalid-feedback d-block">{{ form.categoria.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Tiempo de preparación (min)</label>
+                        <label class="form-label">Tiempo de preparación (min) <span class="text-danger">*</span></label>
                         {{ form.tiempo_preparacion }}
                         {% if form.tiempo_preparacion.errors %}
                         <div class="invalid-feedback d-block">{{ form.tiempo_preparacion.errors.0 }}</div>

@@ -3,6 +3,22 @@ from django.urls import path
 
 from . import views
 
+#Definición de rutas URL:
+#   "/" → página de inicio
+#   "/recetas/" → listar recetas con filtros y paginación
+#   "/recetas/nueva/" → formulario para crear nueva receta
+#   "/recetas/<id>/" → detalle de una receta
+#   "/recetas/<id>/editar/" → formulario para editar receta
+#   "/recetas/<id>/eliminar/" → confirmar y eliminar receta
+#   "/categorias/" → listar, crear, editar, eliminar categorías
+#   "/ingredientes/" → listar, crear, editar, eliminar ingredientes
+#   "/recetas/<id>/comentar/" → añadir comentario a receta
+#   "/exportar/" → exportar datos a CSV/XLSX
+#   "/registro/" → formulario de registro de usuario
+#   "/login/" → formulario de inicio de sesión
+#   "/logout/" → cerrar sesión
+#   "/recetas/<id>/favorito/" → alternar favorito
+#   "/favoritas/" → listar recetas favoritas del usuario
 urlpatterns = [
     path('admin/', admin.site.urls),
 

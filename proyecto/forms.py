@@ -2,6 +2,12 @@ from django import forms
 from .models import Receta, Categoria, Ingrediente, Comentario, RecetaIngrediente
 
 
+#Formulario RecetaForm:
+#   CAMPOS: título (requerido, mín 3 caracteres), descripción (requerido),
+#           instrucciones (requerido), categoría (requerido), tiempo_preparación (requerido, 1-1440),
+#           dificultad
+#   VALIDAR título: SI longitud < 3 → error
+#   VALIDAR tiempo_preparación: SI ≤ 0 O > 1440 → error
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = Receta
@@ -13,22 +19,26 @@ class RecetaForm(forms.ModelForm):
             "titulo": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Nombre de la receta",
+                "required": True,
             }),
             "descripcion": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 3,
                 "placeholder": "Breve descripción de la receta",
+                "required": True,
             }),
             "instrucciones": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 6,
                 "placeholder": "Pasos para preparar la receta",
+                "required": True,
             }),
-            "categoria": forms.Select(attrs={"class": "form-select"}),
+            "categoria": forms.Select(attrs={"class": "form-select", "required": True}),
             "tiempo_preparacion": forms.NumberInput(attrs={
                 "class": "form-control",
                 "min": 1,
                 "placeholder": "Minutos",
+                "required": True,
             }),
             "dificultad": forms.Select(attrs={"class": "form-select"}),
         }
@@ -52,6 +62,9 @@ class RecetaForm(forms.ModelForm):
         return tiempo
 
 
+#Formulario CategoríaForm:
+#   CAMPOS: nombre (requerido, mín 2 caracteres), descripción (opcional)
+#   VALIDAR nombre: SI longitud < 2 → error
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
@@ -75,6 +88,8 @@ class CategoriaForm(forms.ModelForm):
         return nombre
 
 
+#Formulario IngredienteForm:
+#   CAMPOS: nombre (requerido), unidad_base (requerido)
 class IngredienteForm(forms.ModelForm):
     class Meta:
         model = Ingrediente
@@ -91,6 +106,9 @@ class IngredienteForm(forms.ModelForm):
         }
 
 
+#Formulario ComentarioForm:
+#   CAMPOS: contenido (requerido), puntuación (requerido, 1-5)
+#   VALIDAR puntuación: SI < 1 O > 5 → error
 class ComentarioForm(forms.ModelForm):
     class Meta:
         model = Comentario
@@ -115,6 +133,8 @@ class ComentarioForm(forms.ModelForm):
         return puntuacion
 
 
+#Formulario RecetaIngredienteForm:
+#   CAMPOS: ingrediente (requerido), cantidad (requerido, mín 0.01), unidad (requerido), opcional
 class RecetaIngredienteForm(forms.ModelForm):
     class Meta:
         model = RecetaIngrediente
@@ -139,6 +159,10 @@ class RecetaIngredienteForm(forms.ModelForm):
         self.fields["ingrediente"].empty_label = "Seleccionar"
 
 
+#FormSet RecetaIngredienteFormSet:
+#   CREAR formset inline de RecetaIngrediente para Receta
+#   FORMULARIOS extra: 3 (vacíos por defecto)
+#   PERMITIR eliminación de ingredientes existentes
 RecetaIngredienteFormSet = forms.inlineformset_factory(
     Receta,
     RecetaIngrediente,
@@ -148,6 +172,11 @@ RecetaIngredienteFormSet = forms.inlineformset_factory(
 )
 
 
+#Formulario RegistroForm:
+#   CAMPOS: nombre (requerido), email (requerido, único), contraseña (requerido, mín 6),
+#           contraseña_confirmación (requerido)
+#   VALIDAR email: SI ya existe usuario con ese correo → error
+#   VALIDAR contraseñas: SI contraseña ≠ confirmación → error
 class RegistroForm(forms.Form):
     nombre = forms.CharField(
         max_length=100,
@@ -192,6 +221,8 @@ class RegistroForm(forms.Form):
         return cleaned
 
 
+#Formulario LoginForm:
+#   CAMPOS: email (requerido), contraseña (requerido)
 class LoginForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={

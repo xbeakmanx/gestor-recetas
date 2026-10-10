@@ -7,3 +7,5 @@ venv/
 .env
 exportado/
 staticfiles/
+
+.vercel

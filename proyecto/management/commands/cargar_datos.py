@@ -5,6 +5,17 @@ from proyecto.models import (
 )
 
 
+#cargar_datos():
+#   ELIMINAR todos los datos existentes de cada modelo
+#   CREAR 3 usuarios de ejemplo (Ana, Luis, María)
+#   CREAR 4 categorías (Postres, Platos principales, Entrantes, Bebidas)
+#   CREAR 10 ingredientes (Harina, Azúcar, Huevo, Arroz, ...)
+#   CREAR 5 recetas con sus datos (Bizcocho, Paella, Ensalada, Limonada, Tortilla)
+#   CREAR 18 relaciones receta-ingrediente con cantidades y unidades
+#   CREAR 5 imágenes de receta con URLs externas
+#   CREAR 6 comentarios con puntuaciones
+#   CREAR 4 favoritos
+#   MOSTRAR mensaje "Datos de ejemplo cargados correctamente"
 class Command(BaseCommand):
     help = "Carga datos de ejemplo en la base de datos"
 
@@ -97,8 +108,11 @@ class Command(BaseCommand):
         RecetaIngrediente.objects.create(receta=tortilla, ingrediente=aceite, cantidad=200, unidad="ml")
         RecetaIngrediente.objects.create(receta=tortilla, ingrediente=sal, cantidad=5, unidad="g")
 
-        ImagenReceta.objects.create(receta=bizcocho, url_imagen="https://ejemplo.com/bizcocho.jpg", texto_alternativo="Bizcocho casero", es_principal=True)
-        ImagenReceta.objects.create(receta=paella, url_imagen="https://ejemplo.com/paella.jpg", texto_alternativo="Paella valenciana", es_principal=True)
+        ImagenReceta.objects.create(receta=bizcocho, url_imagen="https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=600", texto_alternativo="Bizcocho casero", es_principal=True)
+        ImagenReceta.objects.create(receta=paella, url_imagen="https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=600", texto_alternativo="Paella valenciana", es_principal=True)
+        ImagenReceta.objects.create(receta=ensalada, url_imagen="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600", texto_alternativo="Ensalada mediterránea", es_principal=True)
+        ImagenReceta.objects.create(receta=limonada, url_imagen="https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600", texto_alternativo="Limonada natural", es_principal=True)
+        ImagenReceta.objects.create(receta=tortilla, url_imagen="https://images.unsplash.com/photo-1599789197514-47270cd526b4?w=600", texto_alternativo="Tortilla española", es_principal=True)
 
         Comentario.objects.create(usuario=luis, receta=bizcocho, contenido="Muy rico y fácil de hacer.", puntuacion=5)
         Comentario.objects.create(usuario=maria, receta=bizcocho, contenido="Le añadí chocolate y quedó genial.", puntuacion=4)

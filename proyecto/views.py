@@ -20,6 +20,14 @@ from .services import RecetaService, ExportService
 logger = logging.getLogger("proyecto")
 
 
+#obtener_usuario():
+#   usuario_id ← OBTENER "usuario_id" DE la sesión
+#   SI usuario_id EXISTE:
+#       usuario ← BUSCAR Usuario POR usuario_id
+#       SI usuario EXISTE:
+#           RETORNAR usuario
+#   usuario ← OBTENER O CREAR usuario administrador por defecto
+#   RETORNAR usuario
 class UsuarioMixin:
     def get_usuario(self):
         usuario_id = self.request.session.get("usuario_id")
@@ -38,6 +46,10 @@ class UsuarioMixin:
         return usuario
 
 
+#inicio(petición):
+#   estadísticas ← RecetaService.estadísticas()
+#   últimas_recetas ← OBTENER las 5 recetas más recientes con sus relaciones
+#   RENDERIZAR plantilla "inicio.html" CON estadísticas Y últimas_recetas
 class InicioView(View):
     def get(self, request):
         try:
@@ -55,6 +67,15 @@ class InicioView(View):
         })
 
 
+#listar_recetas(filtros):
+#   recetas ← OBTENER todas las recetas con sus relaciones
+#   SI filtros.categoría EXISTE:
+#       recetas ← FILTRAR recetas POR categoría
+#   SI filtros.dificultad EXISTE:
+#       recetas ← FILTRAR recetas POR dificultad
+#   SI filtros.búsqueda EXISTE:
+#       recetas ← FILTRAR recetas DONDE título O descripción CONTENGA el término
+#   RETORNAR recetas paginadas (12 por página)
 class RecetaListView(ListView):
     model = Receta
     template_name = "proyecto/receta_lista.html"
@@ -86,6 +107,13 @@ class RecetaListView(ListView):
         return context
 
 
+#detalle_receta(pk):
+#   receta ← RecetaService.obtener(pk) CON ingredientes, imágenes y comentarios
+#   SI receta NO EXISTE:
+#       ERROR 404
+#   SI el usuario tiene sesión:
+#       es_favorita ← VERIFICAR si existe Favorito(usuario, receta)
+#   RENDERIZAR plantilla "receta_detalle.html" CON receta, ingredientes, formulario de comentario
 class RecetaDetailView(DetailView):
     model = Receta
     template_name = "proyecto/receta_detalle.html"
@@ -109,11 +137,33 @@ class RecetaDetailView(DetailView):
         return context
 
 
+#crear_receta(datos_formulario, datos_ingredientes):
+#   SI el usuario NO tiene sesión:
+#       REDIRIGIR a login CON parámetro next = ruta actual
+#   usuario ← OBTENER usuario actual de la sesión
+#   SI el formulario de receta NO es válido:
+#       MOSTRAR errores de validación
+#       RETORNAR
+#   SI el formset de ingredientes NO es válido:
+#       MOSTRAR errores
+#       RETORNAR
+#   receta ← CREAR Receta con datos_formulario
+#   receta.usuario ← usuario
+#   GUARDAR receta
+#   PARA CADA ingrediente EN datos_ingredientes:
+#       CREAR RecetaIngrediente(receta, ingrediente, cantidad, unidad)
+#   MOSTRAR mensaje "Receta creada correctamente"
+#   REDIRIGIR a lista de recetas
 class RecetaCreateView(UsuarioMixin, CreateView):
     model = Receta
     form_class = RecetaForm
     template_name = "proyecto/receta_form.html"
     success_url = reverse_lazy("receta_lista")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get("usuario_id"):
+            return redirect(f"{reverse_lazy('login')}?next={request.path}")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -144,6 +194,18 @@ class RecetaCreateView(UsuarioMixin, CreateView):
             return self.form_invalid(form)
 
 
+#actualizar_receta(pk, datos_formulario, datos_ingredientes):
+#   receta ← OBTENER Receta POR pk
+#   SI el formulario NO es válido:
+#       MOSTRAR errores
+#       RETORNAR
+#   SI el formset de ingredientes NO es válido:
+#       MOSTRAR errores
+#       RETORNAR
+#   ACTUALIZAR receta CON datos_formulario
+#   GUARDAR cambios en ingredientes
+#   MOSTRAR mensaje "Receta actualizada"
+#   REDIRIGIR a lista de recetas
 class RecetaUpdateView(UpdateView):
     model = Receta
     form_class = RecetaForm
@@ -179,6 +241,12 @@ class RecetaUpdateView(UpdateView):
             return self.form_invalid(form)
 
 
+#eliminar_receta(pk):
+#   receta ← OBTENER Receta POR pk
+#   CONFIRMAR eliminación con el usuario
+#   ELIMINAR receta de la base de datos
+#   MOSTRAR mensaje "Receta eliminada"
+#   REDIRIGIR a lista de recetas
 class RecetaDeleteView(DeleteView):
     model = Receta
     template_name = "proyecto/receta_confirmar_eliminar.html"
@@ -198,12 +266,25 @@ class RecetaDeleteView(DeleteView):
             return redirect(self.success_url)
 
 
+#listar_categorías():
+#   categorías ← OBTENER todas las categorías
+#   RENDERIZAR plantilla "categoria_lista.html" CON categorías
 class CategoriaListView(ListView):
     model = Categoria
     template_name = "proyecto/categoria_lista.html"
     context_object_name = "categorias"
 
 
+#crear_categoría(nombre, descripción):
+#   SI el formulario NO es válido:
+#       MOSTRAR errores
+#       RETORNAR
+#   categoría ← CREAR Categoría(nombre, descripción)
+#   MOSTRAR mensaje "Categoría creada correctamente"
+#   SI viene desde formulario de receta:
+#       REDIRIGIR a crear receta
+#   SINO:
+#       REDIRIGIR a lista de categorías
 class CategoriaCreateView(CreateView):
     model = Categoria
     form_class = CategoriaForm
@@ -223,6 +304,11 @@ class CategoriaCreateView(CreateView):
         return response
 
 
+#actualizar_categoría(pk, nombre, descripción):
+#   categoría ← OBTENER Categoría POR pk
+#   ACTUALIZAR categoría CON nuevos datos
+#   MOSTRAR mensaje "Categoría actualizada"
+#   REDIRIGIR a lista de categorías
 class CategoriaUpdateView(UpdateView):
     model = Categoria
     form_class = CategoriaForm
@@ -239,6 +325,11 @@ class CategoriaUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+#eliminar_categoría(pk):
+#   categoría ← OBTENER Categoría POR pk
+#   ELIMINAR categoría
+#   MOSTRAR mensaje "Categoría eliminada"
+#   REDIRIGIR a lista de categorías
 class CategoriaDeleteView(DeleteView):
     model = Categoria
     template_name = "proyecto/categoria_confirmar_eliminar.html"
@@ -250,12 +341,22 @@ class CategoriaDeleteView(DeleteView):
         return super().form_valid(form)
 
 
+#listar_ingredientes():
+#   ingredientes ← OBTENER todos los ingredientes
+#   RENDERIZAR plantilla "ingrediente_lista.html" CON ingredientes
 class IngredienteListView(ListView):
     model = Ingrediente
     template_name = "proyecto/ingrediente_lista.html"
     context_object_name = "ingredientes"
 
 
+#crear_ingrediente(nombre, unidad_base):
+#   SI el formulario NO es válido:
+#       MOSTRAR errores
+#       RETORNAR
+#   ingrediente ← CREAR Ingrediente(nombre, unidad_base)
+#   MOSTRAR mensaje "Ingrediente creado correctamente"
+#   REDIRIGIR a lista de ingredientes
 class IngredienteCreateView(CreateView):
     model = Ingrediente
     form_class = IngredienteForm
@@ -272,6 +373,11 @@ class IngredienteCreateView(CreateView):
         return super().form_valid(form)
 
 
+#actualizar_ingrediente(pk, nombre, unidad_base):
+#   ingrediente ← OBTENER Ingrediente POR pk
+#   ACTUALIZAR ingrediente CON nuevos datos
+#   MOSTRAR mensaje "Ingrediente actualizado"
+#   REDIRIGIR a lista de ingredientes
 class IngredienteUpdateView(UpdateView):
     model = Ingrediente
     form_class = IngredienteForm
@@ -288,6 +394,11 @@ class IngredienteUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+#eliminar_ingrediente(pk):
+#   ingrediente ← OBTENER Ingrediente POR pk
+#   ELIMINAR ingrediente
+#   MOSTRAR mensaje "Ingrediente eliminado"
+#   REDIRIGIR a lista de ingredientes
 class IngredienteDeleteView(DeleteView):
     model = Ingrediente
     template_name = "proyecto/ingrediente_confirmar_eliminar.html"
@@ -299,6 +410,19 @@ class IngredienteDeleteView(DeleteView):
         return super().form_valid(form)
 
 
+#añadir_comentario(receta_pk, contenido, puntuación):
+#   receta ← BUSCAR Receta POR receta_pk
+#   SI NO EXISTE:
+#       ERROR 404
+#   SI el formulario es válido:
+#       comentario ← CREAR Comentario
+#       comentario.usuario ← usuario actual de la sesión
+#       comentario.receta ← receta
+#       GUARDAR comentario
+#       MOSTRAR "Comentario añadido"
+#   SINO:
+#       MOSTRAR "Datos del comentario no válidos"
+#   REDIRIGIR al detalle de la receta
 class ComentarioCreateView(UsuarioMixin, View):
     def post(self, request, receta_pk):
         receta = get_object_or_404(Receta, pk=receta_pk)
@@ -319,6 +443,20 @@ class ComentarioCreateView(UsuarioMixin, View):
         return redirect("receta_detalle", pk=receta_pk)
 
 
+#exportar_datos(formato):
+#   SI formato = "csv":
+#       PARA CADA modelo EN [Usuarios, Categorías, Ingredientes, ...]:
+#           dataframe ← modelo.todos().convertir_a_dataframe()
+#           GUARDAR dataframe COMO archivo CSV
+#   SINO SI formato = "xlsx":
+#       CREAR archivo Excel
+#       PARA CADA modelo EN [Usuarios, Categorías, Ingredientes, ...]:
+#           dataframe ← modelo.todos().convertir_a_dataframe()
+#           ESCRIBIR dataframe COMO hoja del Excel
+#   SINO:
+#       EJECUTAR exportar_csv()
+#       EJECUTAR exportar_xlsx()
+#   MOSTRAR mensaje de éxito
 class ExportarView(View):
     def get(self, request):
         return render(request, "proyecto/exportar.html")
@@ -343,6 +481,16 @@ class ExportarView(View):
         return redirect("exportar")
 
 
+#registrar_usuario(nombre, email, contraseña):
+#   SI el formulario NO es válido:
+#       MOSTRAR errores de validación
+#       RETORNAR
+#   hash ← SHA256(contraseña)
+#   usuario ← CREAR Usuario(nombre, email, hash)
+#   GUARDAR usuario.id EN sesión
+#   GUARDAR usuario.nombre EN sesión
+#   MOSTRAR mensaje "Bienvenido/a"
+#   REDIRIGIR a página de inicio
 class RegistroView(View):
     def get(self, request):
         form = RegistroForm()
@@ -371,13 +519,29 @@ class RegistroView(View):
         return render(request, "proyecto/registro.html", {"form": form})
 
 
+#iniciar_sesion(email, contraseña):
+#   hash ← SHA256(contraseña)
+#   usuario ← BUSCAR en Usuarios DONDE email = email
+#   SI usuario NO EXISTE:
+#       MOSTRAR error "No existe una cuenta con ese correo"
+#       RETORNAR
+#   SI usuario.contraseña_hash ≠ hash:
+#       MOSTRAR error "Contraseña incorrecta"
+#       RETORNAR
+#   GUARDAR usuario.id EN sesión
+#   GUARDAR usuario.nombre EN sesión
+#   SI hay URL de redirección (next):
+#       REDIRIGIR a esa URL
+#   SINO:
+#       REDIRIGIR a página de inicio
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
-        return render(request, "proyecto/login.html", {"form": form})
+        return render(request, "proyecto/login.html", {"form": form, "next": request.GET.get("next", "")})
 
     def post(self, request):
         form = LoginForm(request.POST)
+        next_url = request.POST.get("next", "")
         if form.is_valid():
             email = form.cleaned_data["email"]
             contrasena_hash = hashlib.sha256(
@@ -390,22 +554,30 @@ class LoginView(View):
                     request.session["usuario_nombre"] = usuario.nombre
                     messages.success(request, f"Hola, {usuario.nombre}.")
                     logger.info("Login exitoso: %s", email)
+                    if next_url and next_url.startswith("/"):
+                        return redirect(next_url)
                     return redirect("inicio")
                 else:
                     logger.warning("Contraseña incorrecta para: %s", email)
                     return render(request, "proyecto/login.html", {
                         "form": form,
                         "error": "Contraseña incorrecta.",
+                        "next": next_url,
                     })
             except Usuario.DoesNotExist:
                 logger.warning("Intento de login con email no registrado: %s", email)
                 return render(request, "proyecto/login.html", {
                     "form": form,
                     "error": "No existe una cuenta con ese correo.",
+                    "next": next_url,
                 })
-        return render(request, "proyecto/login.html", {"form": form})
+        return render(request, "proyecto/login.html", {"form": form, "next": next_url})
 
 
+#cerrar_sesion():
+#   ELIMINAR todos los datos de la sesión
+#   MOSTRAR mensaje "Sesión cerrada"
+#   REDIRIGIR a página de inicio
 class LogoutView(View):
     def get(self, request):
         request.session.flush()
@@ -413,6 +585,18 @@ class LogoutView(View):
         return redirect("inicio")
 
 
+#alternar_favorito(usuario, receta_pk):
+#   receta ← BUSCAR Receta POR receta_pk
+#   SI NO EXISTE:
+#       ERROR 404
+#   favorito ← BUSCAR Favorito DONDE usuario Y receta
+#   SI favorito EXISTE:
+#       ELIMINAR favorito
+#       MOSTRAR "Eliminada de favoritos"
+#   SINO:
+#       CREAR Favorito(usuario, receta)
+#       MOSTRAR "Añadida a favoritos"
+#   REDIRIGIR a página anterior
 class ToggleFavoritoView(UsuarioMixin, View):
     def post(self, request, receta_pk):
         receta = get_object_or_404(Receta, pk=receta_pk)
@@ -430,6 +614,10 @@ class ToggleFavoritoView(UsuarioMixin, View):
         return redirect("receta_detalle", pk=receta_pk)
 
 
+#listar_favoritas():
+#   usuario ← OBTENER usuario actual de la sesión
+#   recetas ← OBTENER recetas DONDE exista Favorito(usuario, receta)
+#   RENDERIZAR plantilla "favoritas.html" CON recetas
 class FavoritasView(UsuarioMixin, ListView):
     template_name = "proyecto/favoritas.html"
     context_object_name = "recetas"

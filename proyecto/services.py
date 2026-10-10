@@ -12,6 +12,15 @@ from .models import (
 logger = logging.getLogger("proyecto")
 
 
+#RecetaService.listar(filtros):
+#   recetas ← OBTENER todas las recetas con sus relaciones
+#   SI filtros.categoría EXISTE:
+#       recetas ← FILTRAR POR categoría
+#   SI filtros.dificultad EXISTE:
+#       recetas ← FILTRAR POR dificultad
+#   SI filtros.búsqueda EXISTE:
+#       recetas ← FILTRAR DONDE título O descripción CONTENGA el término
+#   RETORNAR recetas
 class RecetaService:
     @staticmethod
     def listar(filtros=None):
@@ -30,6 +39,11 @@ class RecetaService:
         logger.info("Listando recetas con %d resultados", qs.count())
         return qs
 
+    #obtener(pk):
+    #   receta ← BUSCAR Receta POR pk CON ingredientes, imágenes y comentarios
+    #   SI receta NO EXISTE:
+    #       RETORNAR None
+    #   RETORNAR receta
     @staticmethod
     def obtener(pk):
         try:
@@ -46,6 +60,12 @@ class RecetaService:
             logger.warning("Receta con pk=%s no encontrada", pk)
             return None
 
+    #crear(datos, ingredientes_data):
+    #   receta ← CREAR Receta CON datos
+    #   SI ingredientes_data EXISTE:
+    #       PARA CADA ingrediente EN ingredientes_data:
+    #           CREAR RecetaIngrediente(receta, ingrediente)
+    #   RETORNAR receta
     @staticmethod
     def crear(datos, ingredientes_data=None):
         try:
@@ -59,6 +79,11 @@ class RecetaService:
             logger.error("Error al crear receta: %s", str(e))
             raise
 
+    #actualizar(receta, datos):
+    #   PARA CADA campo, valor EN datos:
+    #       ASIGNAR valor al campo de la receta
+    #   GUARDAR receta
+    #   RETORNAR receta
     @staticmethod
     def actualizar(receta, datos):
         try:
@@ -71,6 +96,8 @@ class RecetaService:
             logger.error("Error al actualizar receta pk=%s: %s", receta.pk, str(e))
             raise
 
+    #eliminar(receta):
+    #   ELIMINAR receta de la base de datos
     @staticmethod
     def eliminar(receta):
         titulo = receta.titulo
@@ -82,6 +109,15 @@ class RecetaService:
             logger.error("Error al eliminar receta pk=%s: %s", pk, str(e))
             raise
 
+    #estadísticas():
+    #   RETORNAR:
+    #       total_recetas      ← CONTAR recetas
+    #       total_usuarios     ← CONTAR usuarios
+    #       total_categorías   ← CONTAR categorías
+    #       total_ingredientes ← CONTAR ingredientes
+    #       total_comentarios  ← CONTAR comentarios
+    #       puntuación_media   ← PROMEDIO(comentarios.puntuación)
+    #       recetas_por_categoría ← AGRUPAR categorías CON CONTEO de recetas
     @staticmethod
     def estadisticas():
         return {
@@ -101,6 +137,19 @@ class RecetaService:
         }
 
 
+#ExportService:
+#   exportar_csv(destino):
+#       PARA CADA modelo EN lista de modelos:
+#           dataframe ← modelo.todos().convertir_a_dataframe()
+#           GUARDAR dataframe COMO archivo CSV en destino
+#   exportar_xlsx(destino):
+#       CREAR archivo Excel
+#       PARA CADA modelo EN lista de modelos:
+#           dataframe ← modelo.todos().convertir_a_dataframe()
+#           ESCRIBIR dataframe COMO hoja del Excel
+#   exportar_todo(destino):
+#       EJECUTAR exportar_csv(destino)
+#       EJECUTAR exportar_xlsx(destino)
 class ExportService:
     MODELOS = {
         "usuarios": Usuario,
