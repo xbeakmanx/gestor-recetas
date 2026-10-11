@@ -69,10 +69,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'proyecto.wsgi.application'
 
+import shutil
+_db_original = BASE_DIR / 'db.sqlite3'
+_db_tmp = Path('/tmp/db.sqlite3')
+if not _db_tmp.exists() and _db_original.exists():
+    shutil.copy2(_db_original, _db_tmp)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _db_tmp if _db_tmp.exists() else _db_original,
     }
 }
 
