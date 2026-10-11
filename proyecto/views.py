@@ -274,6 +274,11 @@ class CategoriaListView(ListView):
     template_name = "proyecto/categoria_lista.html"
     context_object_name = "categorias"
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get("usuario_id"):
+            return redirect(f"{reverse_lazy('login')}?next={request.path}")
+        return super().dispatch(request, *args, **kwargs)
+
 
 #crear_categoría(nombre, descripción):
 #   SI el formulario NO es válido:
@@ -348,6 +353,11 @@ class IngredienteListView(ListView):
     model = Ingrediente
     template_name = "proyecto/ingrediente_lista.html"
     context_object_name = "ingredientes"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get("usuario_id"):
+            return redirect(f"{reverse_lazy('login')}?next={request.path}")
+        return super().dispatch(request, *args, **kwargs)
 
 
 #crear_ingrediente(nombre, unidad_base):

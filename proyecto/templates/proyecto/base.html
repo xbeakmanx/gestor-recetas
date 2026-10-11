@@ -25,6 +25,7 @@
                             <i class="bi bi-book"></i> Recetas
                         </a>
                     </li>
+                    {% if request.session.usuario_id %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'categoria_lista' %}">
                             <i class="bi bi-tags"></i> Categorías
@@ -35,18 +36,12 @@
                             <i class="bi bi-basket3"></i> Ingredientes
                         </a>
                     </li>
-                    {% if request.session.usuario_id %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'favoritas' %}">
                             <i class="bi bi-heart"></i> Favoritas
                         </a>
                     </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'exportar' %}">
-                            <i class="bi bi-download"></i> Exportar
-                        </a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if request.session.usuario_id %}
