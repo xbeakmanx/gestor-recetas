@@ -13,9 +13,15 @@
     {% for receta in recetas %}
     <div class="col-md-4">
         <div class="card receta-card h-100">
+            {% with imagen=receta.imagenes.all.0 %}
+            {% if imagen %}
+            <img src="{{ imagen.url_imagen }}" alt="{{ imagen.texto_alternativo }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+            {% else %}
             <div class="card-img-placeholder">
                 <i class="bi bi-egg-fried"></i>
             </div>
+            {% endif %}
+            {% endwith %}
             <div class="card-body">
                 <h5 class="card-title">
                     <a href="{% url 'receta_detalle' receta.pk %}">{{ receta.titulo }}</a>

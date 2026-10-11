@@ -578,7 +578,7 @@
 
     <h3>Componentes principales</h3>
     <ul>
-        <li><strong>Navbar</strong>: Barra de navegación oscura con enlaces condicionales según la sesión del usuario.</li>
+        <li><strong>Navbar</strong>: Barra de navegación oscura con enlaces condicionales según la sesión del usuario. Las secciones de Categorías, Ingredientes, Favoritas y Exportar solo se muestran cuando el usuario ha iniciado sesión.</li>
         <li><strong>Hero</strong>: Sección de bienvenida con degradado y tarjetas de estadísticas.</li>
         <li><strong>Tarjetas de receta</strong>: Imagen placeholder con degradado, etiquetas de categoría/dificultad/tiempo, autor y fecha.</li>
         <li><strong>Filtros</strong>: Barra de filtros con selects y búsqueda en la lista de recetas.</li>
@@ -619,11 +619,11 @@
         <ul>
             <li><strong>Página de inicio</strong>: Muestra estadísticas generales y las últimas recetas publicadas.</li>
             <li><strong>Recetas</strong>: Lista con filtros por categoría, dificultad y búsqueda. Se pueden crear, editar y eliminar recetas. Al crear una receta se añaden ingredientes dinámicamente con el botón "Añadir ingrediente".</li>
-            <li><strong>Categorías / Ingredientes</strong>: CRUD completo accesible desde la barra de navegación.</li>
+            <li><strong>Categorías / Ingredientes</strong>: CRUD completo accesible desde la barra de navegación (requiere iniciar sesión).</li>
             <li><strong>Favoritos</strong>: Hacer clic en el corazón para guardar/quitar una receta de favoritos. Accesible desde el menú "Favoritas" (requiere iniciar sesión).</li>
             <li><strong>Comentarios</strong>: En la página de detalle de cada receta se puede añadir un comentario con puntuación del 1 al 5.</li>
-            <li><strong>Exportar</strong>: Acceder a la sección "Exportar" para descargar los datos en CSV, XLSX o ambos formatos.</li>
-            <li><strong>Registro / Login</strong>: Crear una cuenta o iniciar sesión para acceder a funcionalidades como favoritos y comentarios.</li>
+            <li><strong>Exportar</strong>: Acceder a la sección "Exportar" para descargar los datos en CSV, XLSX o ambos formatos (requiere iniciar sesión).</li>
+            <li><strong>Registro / Login</strong>: Crear una cuenta o iniciar sesión para acceder a las secciones de Categorías, Ingredientes, Favoritos, Exportar y creación de recetas.</li>
         </ul>
     </div>
 
