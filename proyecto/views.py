@@ -56,7 +56,7 @@ class InicioView(View):
             estadisticas = RecetaService.estadisticas()
             ultimas_recetas = Receta.objects.select_related(
                 "usuario", "categoria"
-            )[:5]
+            ).prefetch_related("imagenes")[:5]
         except Exception as e:
             logger.error("Error al cargar inicio: %s", str(e))
             estadisticas = {}
