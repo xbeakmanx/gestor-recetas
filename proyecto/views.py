@@ -523,7 +523,7 @@ class RegistroView(View):
 #   hash ← SHA256(contraseña)
 #   usuario ← BUSCAR en Usuarios DONDE email = email
 #   SI usuario NO EXISTE:
-#       MOSTRAR error "No existe una cuenta con ese correo"
+#       MOSTRAR error "Correo o contraseña incorrectos"
 #       RETORNAR
 #   SI usuario.contraseña_hash ≠ hash:
 #       MOSTRAR error "Contraseña incorrecta"
@@ -561,14 +561,14 @@ class LoginView(View):
                     logger.warning("Contraseña incorrecta para: %s", email)
                     return render(request, "proyecto/login.html", {
                         "form": form,
-                        "error": "Contraseña incorrecta.",
+                        "error": "Correo o contraseña incorrectos.",
                         "next": next_url,
                     })
             except Usuario.DoesNotExist:
                 logger.warning("Intento de login con email no registrado: %s", email)
                 return render(request, "proyecto/login.html", {
                     "form": form,
-                    "error": "No existe una cuenta con ese correo.",
+                    "error": "Correo o contraseña incorrectos.",
                     "next": next_url,
                 })
         return render(request, "proyecto/login.html", {"form": form, "next": next_url})
